@@ -1,0 +1,86 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #8e44ad, #3498db); /* Updated to match login page */
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    margin-bottom: 20px;
+}
+
+.text {
+    font-size: 48px;
+    font-weight: 700;
+    color: white; /* Changed to white for better contrast */
+}
+
+.underline {
+    width: 61px;
+    height: 6px;
+    background: white; /* Changed to white to match text color */
+    border-radius: 9px;
+    margin: 0 auto; /* Center the underline */
+}
+
+.inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.input {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    gap: 10px;
+}
+
+.input img {
+    width: 20px;
+    height: 20px;
+    object-fit: cover;
+}
+
+.input input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: #333;
+}
+
+.input input::placeholder {
+    color: #aaa;
+}
+
+.submitContainer {
+    margin-top: 20px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.submit {
+    background-color: #732d91; /* Adjusted to complement the gradient */
+    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit:hover {
+    background-color: #8e44ad; /* Subtle hover effect */
+}
