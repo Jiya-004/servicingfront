@@ -42,8 +42,7 @@ export default function BasicTable() {
           <TableRow>
              
             <TableCell align="right">Id</TableCell>
-            <TableCell align="right">First Name</TableCell>
-            <TableCell align="right">Last Name</TableCell>
+            <TableCell align="right">Name</TableCell>
             <TableCell align="right">Email</TableCell>
             <TableCell align='"right'>action</TableCell>
           </TableRow>
@@ -56,8 +55,7 @@ export default function BasicTable() {
             >
              
               <TableCell align="right">{row.id}</TableCell>
-              <TableCell align="right">{row.firstname}</TableCell>
-              <TableCell align="right">{row.lastname}</TableCell>
+              <TableCell align="right">{row.name}</TableCell>
               <TableCell align="right">{row.email}</TableCell>
               <TableCell align="right">
                 <IconButton><Edit></Edit></IconButton>

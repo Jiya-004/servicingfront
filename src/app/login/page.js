@@ -89,7 +89,7 @@ const StyledButton = styled.button`
 
 export default function Login() {
   const [loginData, setLoginData] = useState({
-    username: "",
+     name: "",
     password: "",
   });
 
@@ -129,9 +129,9 @@ export default function Login() {
           <Subtitle>Login to your account</Subtitle>
           <Input
             type="text"
-            name="username"
+            name="name"
             placeholder="name"
-            value={loginData.username}
+            value={loginData.name}
             onChange={handleChange}
           />
           <Input
