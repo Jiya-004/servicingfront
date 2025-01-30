@@ -2,7 +2,7 @@
 import { Box, CssBaseline } from "@mui/material";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Sidebar from "./menu/menu";
+import Sidebar from "./menu/page";
 import { isTokenValid, removeToken } from "./util/authutil";
 
 // This layout will be used across all pages of the app
@@ -19,7 +19,6 @@ export default function Layout({ children }) {
     } else {
       setIsAuthenticated(false);
       removeToken();
-      router.push("/login");
     }
   };
   useEffect(() => {
@@ -31,7 +30,7 @@ export default function Layout({ children }) {
   return (
     <html>
       <body>
-        <Box sx={{ display: "flex", width: "100%", height: "100vh" }}>
+        <Box sx={{ display: "flex", width: "100%", height: "102vh", background:'linear-gradient(#2A00B7, #42006C)' }}>
 
           <CssBaseline />
 
@@ -48,6 +47,7 @@ export default function Layout({ children }) {
               marginLeft: drawerOpen ? "240px" : "60px", // Matches Sidebar width
               transition: "margin-left 0.3s ease", // Smooth transition
               padding: 2, // Add padding for inner content
+              
             }}
           >
             {children}

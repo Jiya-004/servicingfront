@@ -1,7 +1,5 @@
-
-
 import axios from "axios";
-import { getToken,saveToken } from "./authutil";
+import { getToken, saveToken } from "./authutil";
 
 const API_BASE_URL = "http://localhost:8080";
 
@@ -39,22 +37,40 @@ export async function makeApiCall(endpoint, method = "GET", body = null) {
     }
   }
 }
- export function getUsers(){
-  return makeApiCall("/users/list","GET");
- }
- export async function login(data) {
 
-    console.log("Making api call");
-    const response =await makeApiCall("/auth/login","POST",data);
-    saveToken(response.Token);
+export function getUsers() {
+  return makeApiCall("/users/list", "GET");
+}
+
+export async function login(data) {
+  console.log("Making API call");
+  const response = await makeApiCall("/auth/login", "POST", data);
+  saveToken(response.Token);
+  return response;
+}
+
+export async function deleteUser(id) {
+  return await makeApiCall(`/users/${id}`, "DELETE");
+}
+
+export async function signup(data) {
+  try {
+    console.log("Making API call for signup...");
+    const response = await makeApiCall("/auth/signup", "POST", data);
+
+    // Optional: If the signup is successful, you can automatically log the user in by saving their token
+    if (response && response.Token) {
+      saveToken(response.Token);  // Save the token
+    }
+
     return response;
+  } catch (error) {
+    console.log("Signup failed:", error);
     
   }
-
-  export async function deleteUser(id) {
-    return await makeApiCall(`/users/${id}`,"DELETE");
-    
-  }
-  
+}
  
-
+export async function addUser(data) {
+  return await makeApiCall("/users/add","POST",data);
+  
+}

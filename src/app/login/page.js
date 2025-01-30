@@ -10,8 +10,9 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(135deg, #8e44ad, #3498db);
+  background: linear-gradient(#2A00B7, #42006C);
   font-family: 'Arial', sans-serif;
+ 
 `;
 const Footer = styled.div`
   margin-top: 20px;
@@ -34,8 +35,8 @@ const Card = styled.div`
   display: flex;
   flex-direction: column;
   background: white;
-  width: 400px; /* Adjusted width */
-  height: 500px; /* Adjusted height */
+  width: 450px; /* Adjusted width */
+  height: 550px; /* Adjusted height */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   overflow: hidden;
@@ -50,7 +51,7 @@ const FormSection = styled.div`
 `;
 
 const Title = styled.h1`
-  color: #4a4a4a;
+  color: purple;
   margin-bottom: 10px;
 `;
 
@@ -73,12 +74,12 @@ const Input = styled.input`
 `;
 
 const StyledButton = styled.button`
-  padding: 10px;
+  padding: 9px;
   font-size: 16px;
   color: white;
   background: #8e44ad;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
   transition: background 0.3s;
 
@@ -125,7 +126,7 @@ export default function Login() {
     <Container>
       <Card>
         <FormSection>
-          <Title>Welcome to ServiceSync!</Title>
+          <Title>Welcome to AJS Auto Service</Title>
           <Subtitle>Login to your account</Subtitle>
           <Input
             type="text"
@@ -140,12 +141,11 @@ export default function Login() {
             placeholder="Password"
             value={loginData.password}
             onChange={handleChange}
+            
           />
           <StyledButton onClick={handleSubmit}>Login</StyledButton>
         </FormSection>
-        <Footer>
-          Are you new? <a onClick={() => router.push("/signup")}>Sign Up</a>
-        </Footer>
+         
       </Card>
     </Container>
   );
