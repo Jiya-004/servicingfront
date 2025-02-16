@@ -30,7 +30,7 @@ export default function HomePage() {
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     console.log("User logged out");
-    router.push("/login");
+    router.push("/home");
   };
 
   return (
@@ -66,10 +66,10 @@ export default function HomePage() {
 
       {/* Main Content */}
       <Container maxWidth="lg" style={{ marginTop: "50px", textAlign: "center" }}>
-        <Typography variant="h3" align="center" gutterBottom>
+        <Typography variant="h3" align="center" gutterBottom  style={{ color: 'white' }}>  
           Welcome, {username}!
         </Typography>
-        <Typography variant="body1" align="center" style={{ color: "#ddd", marginBottom: "30px" }}>
+        <Typography variant="body1" align="center" style={{ color: "white", marginBottom: "30px" }}>
           Manage vehicle services, bookings, and customer details effortlessly.
         </Typography>
 

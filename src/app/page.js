@@ -18,8 +18,10 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+//import ServiceRequestManager from "./components/ServiceRequestManager";
 
 export default function HomePage() {
+ // return <ServiceRequestManager />;
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false); // Move this inside the component
   const router = useRouter();
   const [username, setUsername] = useState("User");
@@ -40,7 +42,7 @@ export default function HomePage() {
   const confirmLogout = () => {
     setLogoutDialogOpen(false);
     localStorage.removeItem("authToken"); // Ensure token is removed
-    router.push("/login");
+    router.push("/home");
   };
 
   const cancelLogout = () => {
@@ -95,7 +97,7 @@ export default function HomePage() {
       {/* Main Content */}
       <Container
         maxWidth="lg"
-        style={{ marginTop: "50px", textAlign: "center", color: "black" }}
+        style={{ marginTop: "50px", textAlign: "center", color: "purple" }}
       >
         <Typography variant="h3" align="center" gutterBottom>
           Welcome, {username}!
@@ -103,9 +105,9 @@ export default function HomePage() {
         <Typography
           variant="body1"
           align="center"
-          style={{ color: "black", marginBottom: "30px" }}
+          style={{ color: "purple", marginBottom: "30px" }}
         >
-          Manage vehicle services, bookings, and customer details effortlessly.
+          Manage vehicle services, workers, and customer details effortlessly.
         </Typography>
 
         {/* Dashboard Features */}
@@ -114,20 +116,13 @@ export default function HomePage() {
           <Grid item xs={12} sm={6} md={4}>
             <Card style={{ backgroundColor: "#212121", color: "#fff" }}>
               <CardContent>
-                <Typography variant="h6">Manage Bookings</Typography>
+                <Typography variant="h6">Manage customer</Typography>
                 <Typography variant="body2" style={{ color: "#ccc" }}>
-                  View and update customer service bookings.
+                  View and update customer details.
                 </Typography>
               </CardContent>
               <CardActions>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => router.push("/bookings")}
-                  style={{ margin: "auto" }}
-                >
-                  Explore
-                </Button>
+                 
               </CardActions>
             </Card>
           </Grid>
@@ -136,20 +131,13 @@ export default function HomePage() {
           <Grid item xs={12} sm={6} md={4}>
             <Card style={{ backgroundColor: "#212121", color: "#fff" }}>
               <CardContent>
-                <Typography variant="h6">Manage Vehicles</Typography>
+                <Typography variant="h6">Manage workers</Typography>
                 <Typography variant="body2" style={{ color: "#ccc" }}>
-                  Add, update, or view vehicle records.
+                  Add, update, or view workers records.
                 </Typography>
               </CardContent>
               <CardActions>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => router.push("/vehicles")}
-                  style={{ margin: "auto" }}
-                >
-                  Explore
-                </Button>
+                 
               </CardActions>
             </Card>
           </Grid>
@@ -160,18 +148,11 @@ export default function HomePage() {
               <CardContent>
                 <Typography variant="h6">Manage Services</Typography>
                 <Typography variant="body2" style={{ color: "#ccc" }}>
-                  Define service types, pricing, and availability.
+                  Define service types, and pricing.
                 </Typography>
               </CardContent>
               <CardActions>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => router.push("/services")}
-                  style={{ margin: "auto" }}
-                >
-                  Explore
-                </Button>
+                
               </CardActions>
             </Card>
           </Grid>

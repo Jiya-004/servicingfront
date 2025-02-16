@@ -12,8 +12,8 @@ const Container = styled.div`
   height: 100vh;
   background: linear-gradient(#2A00B7, #42006C);
   font-family: 'Arial', sans-serif;
+ 
 `;
-
 const Footer = styled.div`
   margin-top: 20px;
   text-align: center;
@@ -35,8 +35,8 @@ const Card = styled.div`
   display: flex;
   flex-direction: column;
   background: white;
-  width: 450px;
-  height: 600px;
+  width: 450px; /* Adjusted width */
+  height: 550px; /* Adjusted height */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   overflow: hidden;
@@ -73,19 +73,6 @@ const Input = styled.input`
   }
 `;
 
-const Select = styled.select`
-  margin-bottom: 15px;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  outline: none;
-
-  &:focus {
-    border-color: #8e44ad;
-  }
-`;
-
 const StyledButton = styled.button`
   padding: 9px;
   font-size: 16px;
@@ -103,9 +90,8 @@ const StyledButton = styled.button`
 
 export default function Login() {
   const [loginData, setLoginData] = useState({
-    name: "",
+     name: "",
     password: "",
-    role: "admin", // Default role
   });
 
   const router = useRouter();
@@ -141,11 +127,11 @@ export default function Login() {
       <Card>
         <FormSection>
           <Title>Welcome to AJS Auto Service</Title>
-          <Subtitle>Login to your account</Subtitle>
+          <Subtitle>Login as Customer</Subtitle>
           <Input
             type="text"
             name="name"
-            placeholder="Name"
+            placeholder="name"
             value={loginData.name}
             onChange={handleChange}
           />
@@ -155,18 +141,11 @@ export default function Login() {
             placeholder="Password"
             value={loginData.password}
             onChange={handleChange}
+            
           />
-          <Select name="role" value={loginData.role} onChange={handleChange}>
-            <option value="admin">Admin</option>
-            <option value="user">User</option>
-          </Select>
           <StyledButton onClick={handleSubmit}>Login</StyledButton>
         </FormSection>
-
-        {/* Register Link */}
-        <Footer>
-          <p>Don't have an account? <a onClick={() => router.push("/signup")}>Register</a></p>
-        </Footer>
+         
       </Card>
     </Container>
   );

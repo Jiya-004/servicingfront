@@ -1,32 +1,37 @@
-"use client"; // Marking this as a client-side component
+"use client";
 
 import React, { useState } from "react";
-import { addUser } from "../util/api"; // Importing addUser from your API file
+import { addUser } from "../util/api";
 import MailIcon from "@mui/icons-material/Mail";
 import PersonIcon from "@mui/icons-material/Person";
 import LockIcon from "@mui/icons-material/Lock";
+import PhoneIcon from "@mui/icons-material/Phone";
+import HomeIcon from "@mui/icons-material/Home";
 import styles from "./signup.module.css";
 import { useRouter } from "next/navigation";
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 export default function SignUp() {
-  // State to handle form data and validation errors
   const [signUpData, setSignUpData] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
+    address: "",
+    phoneNumber: "",
+    username: "",
     password: "",
-    role:""
+    role: "user", // Default role
   });
 
   const [errors, setErrors] = useState({
     email: "",
     password: "",
+    phoneNumber: "",
   });
 
-  const [loading, setLoading] = useState(false); // For button disable/loading state
-  const router = useRouter(); // Hook for navigation
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  // Handle input changes dynamically
   const handleChange = (e) => {
     const { name, value } = e.target;
     setSignUpData({
@@ -34,44 +39,41 @@ export default function SignUp() {
       [name]: value,
     });
 
-    // Reset errors for the current field
     setErrors({
       ...errors,
       [name]: "",
     });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     let valid = true;
     const newErrors = {};
 
-    // Validate email
     if (!signUpData.email.endsWith("@gmail.com")) {
       newErrors.email = "Email must end with @gmail.com";
       valid = false;
     }
 
-    // Validate password length
     if (signUpData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters long";
       valid = false;
     }
 
-    // If validation fails, set errors and return
+    if (signUpData.phoneNumber && !/^\d{10}$/.test(signUpData.phoneNumber)) {
+      newErrors.phoneNumber = "Phone number must be 10 digits";
+      valid = false;
+    }
+
     if (!valid) {
       setErrors(newErrors);
       return;
     }
 
-    // Call signup API after validation passes
     setLoading(true);
     try {
-      await addUser(signUpData); // Send data to the database
+      await addUser(signUpData);
       console.log("Signup successful");
-
-      // After successful signup, navigate to the login page
       router.push("/login");
     } catch (error) {
       console.error("Signup failed:", error);
@@ -92,9 +94,20 @@ export default function SignUp() {
           <PersonIcon style={{ fontSize: "20px", color: "#333" }} />
           <input
             type="text"
-            name="name"
-            placeholder="Name"
-            value={signUpData.name}
+            name="firstName"
+            placeholder="First Name"
+            value={signUpData.firstName}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className={styles.input}>
+          <PersonIcon style={{ fontSize: "20px", color: "#333" }} />
+          <input
+            type="text"
+            name="lastName"
+            placeholder="Last Name"
+            value={signUpData.lastName}
             onChange={handleChange}
             required
           />
@@ -112,6 +125,39 @@ export default function SignUp() {
           {errors.email && <p className={styles.error}>{errors.email}</p>}
         </div>
         <div className={styles.input}>
+          <HomeIcon style={{ fontSize: "20px", color: "#333" }} />
+          <input
+            type="text"
+            name="address"
+            placeholder="Address"
+            value={signUpData.address}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className={styles.input}>
+          <PhoneIcon style={{ fontSize: "20px", color: "#333" }} />
+          <input
+            type="text"
+            name="phoneNumber"
+            placeholder="Phone Number"
+            value={signUpData.phoneNumber}
+            onChange={handleChange}
+          />
+          {errors.phoneNumber && <p className={styles.error}>{errors.phoneNumber}</p>}
+        </div>
+        <div className={styles.input}>
+          <PersonIcon style={{ fontSize: "20px", color: "#333" }} />
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            value={signUpData.username}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className={styles.input}>
           <LockIcon style={{ fontSize: "20px", color: "#333" }} />
           <input
             type="password"
@@ -124,27 +170,29 @@ export default function SignUp() {
           {errors.password && <p className={styles.error}>{errors.password}</p>}
         </div>
         <div className={styles.input}>
-          < AdminPanelSettingsIcon style={{ fontSize: "20px", color: "#333" }} />
-          <input
-            type="role"
-            name="role"
-            placeholder="role"
-            value={signUpData.role}
-            onChange={handleChange}
-            required
-          />
-            
-        </div>
+  <AdminPanelSettingsIcon style={{ fontSize: "20px", color: "#333" }} />
+  <select
+    name="role"
+    value={signUpData.role}
+    onChange={handleChange}
+    required
+    className={styles.select} // Apply custom styling
+  >
+    <option value="" disabled>-- Select Role --</option>
+    <option value="user">User</option>
+    <option value="admin">Admin</option>
+  </select>
+</div>
+
         <div className={styles.submitContainer}>
           <button
             type="submit"
             className={styles.submit}
-            disabled={loading} // Disable button while loading
+            disabled={loading}
           >
             {loading ? "Signing Up..." : "Sign Up"}
           </button>
         </div>
-        
       </form>
     </div>
   );

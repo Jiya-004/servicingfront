@@ -1,25 +1,23 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import MailIcon from "@mui/icons-material/Mail";
 import PersonIcon from "@mui/icons-material/Person";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import HomeIcon from "@mui/icons-material/Home";
+import { addUser } from "../util/api";
 
-const CustomerFormWithDate = () => {
+const CustomerForm = () => {
   const [formData, setFormData] = useState({
-    name: "",
+    firstname: "",
+    lastname: "",
+    username: "",
     address: "",
-    phone: "",
+    phoneNumber: "",
     email: "",
-    date: "", // Date field for customer
   });
 
-  // Set the current date when the component mounts
-  useEffect(() => {
-    const currentDate = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
-    setFormData((prev) => ({ ...prev, date: currentDate }));
-  }, []);
+  const [error, setError] = useState(""); // Define error state
+  const [success, setSuccess] = useState(""); // Define success state
 
   // Handle input change
   const handleChange = (e) => {
@@ -30,11 +28,55 @@ const CustomerFormWithDate = () => {
     });
   };
 
+  const validateForm = () => {
+    const { firstname, lastname, email, phoneNumber, username, address } = formData;
+
+    if (!firstname.trim() || !lastname.trim()) {
+      setError("First name and last name are required.");
+      return false;
+    }
+
+    if (!username.trim() || !address.trim()) {
+      setError("Username and address are required.");
+      return false;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Please enter a valid email address.");
+      return false;
+    }
+
+    if (!/^\d{10}$/.test(phoneNumber)) {
+      setError("Please enter a valid 10-digit phone number.");
+      return false;
+    }
+
+    return true;
+  };
+
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => { // Marked as async
     e.preventDefault();
-    alert("Customer details submitted successfully!");
-    console.log("Customer Data:", formData);
+    if (!validateForm()) {
+      return;
+    }
+    try {
+      await addUser(formData); // Await the API call
+      setSuccess("Customer added successfully!");
+      setError(""); // Clear any previous error message
+
+      setFormData({
+        firstname: "",
+        lastname: "",
+        username: "",
+        address: "",
+        phoneNumber: "",
+        email: "",
+      });
+    } catch (error) {
+      console.error("Error adding user:", error);
+      setError("Error adding customer. Please try again.");
+    }
   };
 
   return (
@@ -60,8 +102,10 @@ const CustomerFormWithDate = () => {
       >
         Customer Information Form
       </h2>
+      {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
+      {success && <p style={{ color: "green", textAlign: "center" }}>{success}</p>}
       <form onSubmit={handleSubmit}>
-        {/* Name */}
+        {/* First Name */}
         <div
           style={{
             marginBottom: "20px",
@@ -74,8 +118,8 @@ const CustomerFormWithDate = () => {
           <PersonIcon style={{ fontSize: "24px", color: "#333", marginRight: "10px" }} />
           <input
             type="text"
-            name="name"
-            value={formData.name}
+            name="firstname"
+            value={formData.firstname}
             onChange={handleChange}
             style={{
               width: "100%",
@@ -85,7 +129,65 @@ const CustomerFormWithDate = () => {
               fontSize: "16px",
               outline: "none",
             }}
-            placeholder="Enter  name"
+            placeholder="Enter first name"
+            required
+          />
+        </div>
+
+        {/* Last Name */}
+        <div
+          style={{
+            marginBottom: "20px",
+            display: "flex",
+            alignItems: "center",
+            borderBottom: "1px solid #ddd",
+            paddingBottom: "10px",
+          }}
+        >
+          <PersonIcon style={{ fontSize: "24px", color: "#333", marginRight: "10px" }} />
+          <input
+            type="text"
+            name="lastname"
+            value={formData.lastname}
+            onChange={handleChange}
+            style={{
+              width: "100%",
+              padding: "12px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              fontSize: "16px",
+              outline: "none",
+            }}
+            placeholder="Enter last name"
+            required
+          />
+        </div>
+
+        {/* Username */}
+        <div
+          style={{
+            marginBottom: "20px",
+            display: "flex",
+            alignItems: "center",
+            borderBottom: "1px solid #ddd",
+            paddingBottom: "10px",
+          }}
+        >
+          <PersonIcon style={{ fontSize: "24px", color: "#333", marginRight: "10px" }} />
+          <input
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            style={{
+              width: "100%",
+              padding: "12px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              fontSize: "16px",
+              outline: "none",
+            }}
+            placeholder="Enter username"
             required
           />
         </div>
@@ -114,12 +216,12 @@ const CustomerFormWithDate = () => {
               fontSize: "16px",
               outline: "none",
             }}
-            placeholder="Enter  address"
+            placeholder="Enter address"
             required
           />
         </div>
 
-        {/* Phone */}
+        {/* Phone Number */}
         <div
           style={{
             marginBottom: "20px",
@@ -132,8 +234,8 @@ const CustomerFormWithDate = () => {
           <LocalPhoneIcon style={{ fontSize: "24px", color: "#333", marginRight: "10px" }} />
           <input
             type="text"
-            name="phone"
-            value={formData.phone}
+            name="phoneNumber"
+            value={formData.phoneNumber}
             onChange={handleChange}
             style={{
               width: "100%",
@@ -143,7 +245,7 @@ const CustomerFormWithDate = () => {
               fontSize: "16px",
               outline: "none",
             }}
-            placeholder="Enter  phone number"
+            placeholder="Enter phone number"
             required
           />
         </div>
@@ -172,36 +274,7 @@ const CustomerFormWithDate = () => {
               fontSize: "16px",
               outline: "none",
             }}
-            placeholder="Enter  email"
-            required
-          />
-        </div>
-
-        {/* Date */}
-        <div
-          style={{
-            marginBottom: "20px",
-            display: "flex",
-            alignItems: "center",
-            borderBottom: "1px solid #ddd",
-            paddingBottom: "10px",
-          }}
-        >
-          <CalendarMonthIcon style={{ fontSize: "24px", color: "#333", marginRight: "10px" }} />
-          <input
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            style={{
-              width: "100%",
-              padding: "12px",
-              border: "1px solid #ddd",
-              borderRadius: "4px",
-              fontSize: "16px",
-              backgroundColor: "#f0f0f0",
-              outline: "none",
-            }}
+            placeholder="Enter email"
             required
           />
         </div>
@@ -220,8 +293,6 @@ const CustomerFormWithDate = () => {
             fontSize: "16px",
             transition: "background-color 0.3s ease",
           }}
-          onMouseOver={(e) => (e.target.style.backgroundColor = "#9b59b6")}
-          onMouseOut={(e) => (e.target.style.backgroundColor = "#8e44ad")}
         >
           Submit Request
         </button>
@@ -230,4 +301,4 @@ const CustomerFormWithDate = () => {
   );
 };
 
-export default CustomerFormWithDate;
+export default CustomerForm;

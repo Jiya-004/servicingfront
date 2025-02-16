@@ -1,19 +1,20 @@
 "use client";
-import { Box, Button, Grid, TextField, Typography, MenuItem, Select, InputLabel, FormControl, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
-
+import { Box, Button, Grid, TextField, Typography, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { addWorker } from "../util/api";
 
 export default function WorkerInformationForm() {
   const [workerData, setWorkerData] = useState({
-    name: "",
-    contactInfo: "",
-    location: "",
+    firstName: "",
+    lastName: "",
+    address: "",
     expertise: "",
-    availability: "",
+    contactInfo: "",
+    email: ""
   });
 
-  const [errorDialogOpen, setErrorDialogOpen] = useState(false); // Track error dialog visibility
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const router = useRouter();
 
   const handleChange = (e) => {
@@ -26,24 +27,37 @@ export default function WorkerInformationForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitted Data: ", workerData);
-
-    // Simulate the API call
+  
     try {
-      // Add your logic to submit the data to the API here
-      console.log("API Request to save worker data");
+      await handleAdd(workerData);
+      console.log("Customer added successfully!");
+      // Reset form after successful submission
+      setWorkerData({
+        firstName: "",
+        lastName: "",
+        address: "",
+        expertise: "",
+        contactInfo: "",
+        email: ""
 
-      // If successful, navigate to a success page or show success message
-      router.push("/worker-dashboard");  // Or handle based on response
-
+      });
     } catch (error) {
-      console.error("Submission Error: ", error);
-      setErrorDialogOpen(true); // Show error dialog if submission fails
+      
+      setErrorDialogOpen(true);
+    } 
+
+    
+  };
+  const handleAdd = async (worker) => {
+    try {
+      await addWorker(worker);
+    } catch (error) {
+      throw error; // Propagate error to be handled by handleSubmit
     }
   };
 
   const handleDialogClose = () => {
-    setErrorDialogOpen(false); // Close the dialog
+    setErrorDialogOpen(false);
   };
 
   return (
@@ -53,8 +67,7 @@ export default function WorkerInformationForm() {
         justifyContent: "center",
         alignItems: "center",
         height: "90vh",
-     
-       backgroundSize: "cover",
+        backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         imageRendering: "auto",
@@ -81,39 +94,42 @@ export default function WorkerInformationForm() {
           Please fill out the form below with your details.
         </Typography>
         <Grid container direction="column" spacing={3}>
-          {/* Name */}
+          {/* First Name */}
           <Grid item>
             <TextField
-              label="Name"
+              label="First Name"
               variant="outlined"
-              name="name"
+              name="firstName"
               fullWidth
-              value={workerData.name}
+              value={workerData.firstName}
               onChange={handleChange}
+              required
             />
           </Grid>
 
-          {/* Contact Info */}
+          {/* Last Name */}
           <Grid item>
             <TextField
-              label="Contact Info"
+              label="Last Name"
               variant="outlined"
-              name="contactInfo"
+              name="lastName"
               fullWidth
-              value={workerData.contactInfo}
+              value={workerData.lastName}
               onChange={handleChange}
+              required
             />
           </Grid>
 
-          {/* Location */}
+          {/* Address */}
           <Grid item>
             <TextField
-              label="Location"
+              label="Address"
               variant="outlined"
-              name="location"
+              name="address"
               fullWidth
-              value={workerData.location}
+              value={workerData.address}
               onChange={handleChange}
+              required
             />
           </Grid>
 
@@ -126,25 +142,35 @@ export default function WorkerInformationForm() {
               fullWidth
               value={workerData.expertise}
               onChange={handleChange}
+              required
             />
           </Grid>
 
-          {/* Availability */}
+          {/* Contact Info */}
           <Grid item>
-            <FormControl fullWidth>
-              <InputLabel id="availability-label">Availability</InputLabel>
-              <Select
-                labelId="availability-label"
-                id="availability"
-                name="availability"
-                value={workerData.availability}
-                onChange={handleChange}
-                label="Availability"
-              >
-                <MenuItem value="Available">Available</MenuItem>
-                <MenuItem value="Unavailable">Unavailable</MenuItem>
-              </Select>
-            </FormControl>
+            <TextField
+              label="Contact Info"
+              variant="outlined"
+              name="contactInfo"
+              fullWidth
+              value={workerData.contactInfo}
+              onChange={handleChange}
+              required
+            />
+          </Grid>
+
+          {/* Email */}
+          <Grid item>
+            <TextField
+              label="Email"
+              variant="outlined"
+              name="email"
+              type="email"
+              fullWidth
+              value={workerData.email}
+              onChange={handleChange}
+              required
+            />
           </Grid>
 
           {/* Submit Button */}
@@ -177,9 +203,6 @@ export default function WorkerInformationForm() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose} color="secondary">
-            Cancel
-          </Button>
           <Button onClick={handleDialogClose} color="primary" variant="contained">
             Close
           </Button>

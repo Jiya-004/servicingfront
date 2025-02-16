@@ -94,7 +94,7 @@ export default function Sidebar({ drawerOpen, toggleDrawer }) {
       >
         {/* Sidebar Header */}
         <IconButton onClick={toggleDrawer} sx={{ marginBottom: 2,
-         color: "black",
+         color: "white",
           
 
         }}>
@@ -104,6 +104,7 @@ export default function Sidebar({ drawerOpen, toggleDrawer }) {
           <Typography
             variant="h6"
             sx={{ fontWeight: "bold", marginBottom: 2, textShadow: "1px 1px 5px rgba(0, 0, 0, 0.7)" }}
+            style={{ color: 'white' }}
           >
             Service Sync
           </Typography>
@@ -112,12 +113,13 @@ export default function Sidebar({ drawerOpen, toggleDrawer }) {
 
       {/* Menu List */}
       <List>
+        
         {/* Dashboard */}
         <ListItem button onClick={() => routeToPage("/dashboard")}>
           <ListItemIcon>
-            <Dashboard sx={{ color: "black" }} />
+            <Dashboard sx={{ color: "white" }} />
           </ListItemIcon>
-          {drawerOpen && <ListItemText primary="Dashboard" />}
+          {drawerOpen && <ListItemText   style={{ color: 'white' }}primary="Dashboard" />}
         </ListItem>
 
         <Divider sx={{ backgroundColor: "rgba(255, 255, 255, 0.5)" }} />
@@ -125,24 +127,24 @@ export default function Sidebar({ drawerOpen, toggleDrawer }) {
         {/* Users Menu */}
         <ListItem button onClick={toggleUsersMenu}>
           <ListItemIcon>
-            <Group sx={{ color: "black" }} />
+            <Group sx={{ color: "white" }} />
           </ListItemIcon>
-          {drawerOpen && <ListItemText primary="Customers" />}
-          {openUsers ? <ExpandLess sx={{ color: "black" }} /> : <ExpandMore sx={{ color: "black" }} />}
+          {drawerOpen && <ListItemText  style={{ color: 'white' }} primary="Customers" />}
+          {openUsers ? <ExpandLess sx={{ color: "white" }} /> : <ExpandMore sx={{ color: "white" }} />}
         </ListItem>
         <Collapse in={openUsers} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItem button onClick={() => routeToPage("/addcustomers")}>
+            <ListItem   style={{ color: 'white' }}button onClick={() => routeToPage("/addcustomers")}>
               <ListItemIcon>
-                <Add sx={{ color: "black" }} />
+                <Add sx={{ color: "white" }} />
               </ListItemIcon>
               {drawerOpen && <ListItemText primary="Add customers" />}
             </ListItem>
             <ListItem button onClick={() => routeToPage("/customerlist")}>
               <ListItemIcon>
-                <Group sx={{ color: "black" }} />
+                <Group sx={{ color: "white" }} />
               </ListItemIcon>
-              {drawerOpen && <ListItemText primary="Customers List" />}
+              {drawerOpen && <ListItemText  style={{ color: 'white' }}primary="Customers List" />}
             </ListItem>
           </List>
         </Collapse>
@@ -152,63 +154,72 @@ export default function Sidebar({ drawerOpen, toggleDrawer }) {
         {/* Workers Menu */}
         <ListItem button onClick={toggleWorkersMenu}>
           <ListItemIcon>
-            <Person sx={{ color: "black" }} />
+            <Person sx={{ color: "white" }} />
           </ListItemIcon>
-          {drawerOpen && <ListItemText primary="Workers" />}
-          {openWorkers ? <ExpandLess sx={{ color: "black" }} /> : <ExpandMore sx={{ color: "black" }} />}
+          {drawerOpen && <ListItemText  style={{ color: 'white' }}primary="Workers" />}
+          {openWorkers ? <ExpandLess sx={{ color: "white" }} /> : <ExpandMore sx={{ color: "white" }} />}
         </ListItem>
         <Collapse in={openWorkers} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItem button onClick={() => routeToPage("/addworker")}>
               <ListItemIcon>
-                <Add sx={{ color: "black" }} />
+                <Add sx={{ color: "white" }} />
               </ListItemIcon>
-              {drawerOpen && <ListItemText primary="Add Worker" />}
+              {drawerOpen && <ListItemText  style={{ color: 'white' }} primary="Add Worker" />}
             </ListItem>
             <ListItem button onClick={() => routeToPage("/workerlist")}>
               <ListItemIcon>
-                <Group sx={{ color: "black" }} />
+                <Group sx={{ color: "white" }} />
               </ListItemIcon>
-              {drawerOpen && <ListItemText primary="Worker List" />}
+              {drawerOpen && <ListItemText   style={{ color: 'white' }}primary="Worker List" />}
             </ListItem>
           </List>
         </Collapse>
 
         <Divider sx={{ backgroundColor: "rgba(255, 255, 255, 0.5)" }} />
 
-        {/* Services Menu */}
-        <ListItem button onClick={toggleServicesMenu}>
-          <ListItemIcon>
-            <DirectionsCar sx={{ color: "black" }} />
-          </ListItemIcon>
-          {drawerOpen && <ListItemText primary="Services" />}
-          {openServices ? <ExpandLess sx={{ color: "black" }} /> : <ExpandMore sx={{ color: "black" }} />}
-        </ListItem>
-        <Collapse in={openServices} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <ListItem button onClick={() => routeToPage("/bookservice")}>
-              <ListItemIcon>
-                <Add sx={{ color: "black" }} />
-              </ListItemIcon>
-              {drawerOpen && <ListItemText primary="Book Service" />}
-            </ListItem>
-            <ListItem button onClick={() => routeToPage("/servicehistory")}>
-              <ListItemIcon>
-                <ListAlt sx={{ color: "black" }} />
-              </ListItemIcon>
-              {drawerOpen && <ListItemText primary="Service History" />}
-            </ListItem>
-          </List>
-        </Collapse>
+      {/* Services Menu */}
+<ListItem button onClick={toggleServicesMenu}>
+  <ListItemIcon>
+    <DirectionsCar sx={{ color: "white" }} />
+  </ListItemIcon>
+  {drawerOpen && <ListItemText style={{ color: 'white' }} primary="Services" />}
+  {openServices ? <ExpandLess sx={{ color: "white" }} /> : <ExpandMore sx={{ color: "white" }} />}
+</ListItem>
+<Collapse in={openServices} timeout="auto" unmountOnExit>
+  <List component="div" disablePadding>
+    {/* Book Service */}
+    <ListItem button onClick={() => routeToPage("/bookservice")}>
+      <ListItemIcon>
+        <Add sx={{ color: "white" }} />
+      </ListItemIcon>
+      {drawerOpen && <ListItemText style={{ color: 'white' }} primary="Add to Service" />}
+    </ListItem>
+    {/* Service History */}
+    <ListItem button onClick={() => routeToPage("/servicehistory")}>
+      <ListItemIcon>
+        <ListAlt sx={{ color: "white" }} />
+      </ListItemIcon>
+      {drawerOpen && <ListItemText style={{ color: 'white' }} primary="Service History" />}
+    </ListItem>
+    {/* Service Type List */}
+    <ListItem button onClick={() => routeToPage("/servicetypes")}>
+      <ListItemIcon>
+        <DirectionsCar sx={{ color: "white" }} />
+      </ListItemIcon>
+      {drawerOpen && <ListItemText style={{ color: 'white' }} primary="Service Types" />}
+    </ListItem>
+  </List>
+</Collapse>
 
         <Divider sx={{ backgroundColor: "rgba(255, 255, 255, 0.5)" }} />
 
         {/* Logout */}
         <ListItem button onClick={handleLogout}>
           <ListItemIcon>
-            <Logout sx={{ color: "black" }} />
+            <Logout sx={{ color: "white" }} />
           </ListItemIcon>
-          {drawerOpen && <ListItemText primary="Logout" />}
+          {drawerOpen && <ListItemText  style={{ color: 'white' }} primary="Logout" />}
         </ListItem>
       </List>
 

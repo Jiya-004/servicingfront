@@ -29,7 +29,7 @@ export async function makeApiCall(endpoint, method = "GET", body = null) {
   } catch (error) {
     console.error(`Error in API call to ${endpoint}:`, error);
 
-    // Check if the error is a response error
+    
     if (error.response) {
       throw new Error(error.response.data.message || "API error");
     } else {
@@ -43,10 +43,14 @@ export function getUsers() {
 }
 
 export async function login(data) {
-  console.log("Making API call");
-  const response = await makeApiCall("/auth/login", "POST", data);
-  saveToken(response.Token);
-  return response;
+  console.log("Making api call");
+    const response = await makeApiCall("/auth/login", "POST", data);
+    saveToken(response.Token);
+    return response;
+  
+}
+export async function addService(data) { // Renamed to addService
+  return await makeApiCall("/services","POST",data);
 }
 
 export async function deleteUser(id) {
@@ -72,5 +76,57 @@ export async function signup(data) {
  
 export async function addUser(data) {
   return await makeApiCall("/users/add","POST",data);
+  
+}
+export  async  function getServices(){
+   return await makeApiCall("/services","GET")
+};
+export const deleteService = async (id) => {
+  return await makeApiCall(`/services/${id}`, "DELETE");
+};
+
+export async function addWorker(data) {
+  return await makeApiCall("/workers/add","POST",data);
+  
+};
+export  async  function getWorkers(){
+  return await makeApiCall("/workers/all","GET");
+};
+export const deleteWorker = async (id) => {
+  return await makeApiCall(`/workers/${id}`, "DELETE");
+};
+export async function updateUser(id, data) {
+  try {
+    return await makeApiCall(`/users/${id}`, "PUT", data);
+  } catch (error) {
+    console.error("Error updating customer:", error);
+    throw error; // Rethrow the error to be handled in the component
+  }
+}
+export async function updateWorker(id, data) {
+  try {
+    return await makeApiCall(`/workers/${id}`, "PUT", data);
+  } catch (error) {
+    console.error("Error updating customer:", error);
+    throw error; // Rethrow the error to be handled in the component
+  }
+}
+export  async  function getServiceTypes(){
+  return await makeApiCall("/servicetypes","GET");
+
+};
+export const deleteServiceType = async (id) => {
+  return await makeApiCall(`/servicetypes/${id}`, "DELETE");
+};
+export async function updateServiceType(id, data) {
+  try {
+    return await makeApiCall(`/servicetypes/${id}`, "PUT", data);
+  } catch (error) {
+    console.error("Error updating customer:", error);
+    throw error; // Rethrow the error to be handled in the component
+  }
+}
+export async function addServiceType(data) {
+  return await makeApiCall("/servicetypes","POST",data);
   
 }

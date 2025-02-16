@@ -18,7 +18,7 @@ body {
 
 body {
   color: var(--foreground);
-  background: linear-gradient(#2A00B7, #42006C), url'("/background-image.jpg")';
+ /* background: linear-gradient(#2A00B7, #42006C), url'("/background-image.jpg")';
   background-size: cover; /* Ensures the image covers the entire viewport */
   background-repeat: no-repeat; /* Prevents the image from repeating */
   background-position: center; /* Centers the image */
