@@ -7,9 +7,9 @@ import {
   Group,
   Logout,
   Menu,
-  Add,
   Person,
   ListAlt,
+  Add,
 } from "@mui/icons-material";
 import {
   Box,
@@ -38,7 +38,6 @@ export default function Sidebar({ drawerOpen, toggleDrawer }) {
   const [openWorkers, setOpenWorkers] = useState(false);
   const [openServices, setOpenServices] = useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
-  
   const router = useRouter();
 
   const routeToPage = (url) => {
@@ -48,20 +47,13 @@ export default function Sidebar({ drawerOpen, toggleDrawer }) {
   const toggleUsersMenu = () => setOpenUsers(!openUsers);
   const toggleWorkersMenu = () => setOpenWorkers(!openWorkers);
   const toggleServicesMenu = () => setOpenServices(!openServices);
-
-  const handleLogout = () => {
-    setLogoutDialogOpen(true);
-  };
-
+  const handleLogout = () => setLogoutDialogOpen(true);
   const confirmLogout = () => {
     setLogoutDialogOpen(false);
     removeToken();
     router.push("/login");
   };
-
-  const cancelLogout = () => {
-    setLogoutDialogOpen(false);
-  };
+  const cancelLogout = () => setLogoutDialogOpen(false);
 
   return (
     <Drawer
@@ -81,31 +73,13 @@ export default function Sidebar({ drawerOpen, toggleDrawer }) {
         },
       }}
     >
-      <Box
-        sx={{
-          width: drawerOpen ? 240 : 60,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: drawerOpen ? 240 : 60,
-            boxSizing: "border-box",
-            transition: "width 0.3s",
-          },
-        }}
-      >
+      <Box sx={{ width: drawerOpen ? 240 : 60, flexShrink: 0 }}>
         {/* Sidebar Header */}
-        <IconButton onClick={toggleDrawer} sx={{ marginBottom: 2,
-         color: "white",
-          
-
-        }}>
+        <IconButton onClick={toggleDrawer} sx={{ mb: 2, color: "white" }}>
           <Menu />
         </IconButton>
         {drawerOpen && (
-          <Typography
-            variant="h6"
-            sx={{ fontWeight: "bold", marginBottom: 2, textShadow: "1px 1px 5px rgba(0, 0, 0, 0.7)" }}
-            style={{ color: 'white' }}
-          >
+          <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2, textShadow: "1px 1px 5px rgba(0, 0, 0, 0.7)" }} style={{ color: "white" }}>
             Service Sync
           </Typography>
         )}
@@ -113,104 +87,89 @@ export default function Sidebar({ drawerOpen, toggleDrawer }) {
 
       {/* Menu List */}
       <List>
-        
         {/* Dashboard */}
         <ListItem button onClick={() => routeToPage("/dashboard")}>
           <ListItemIcon>
             <Dashboard sx={{ color: "white" }} />
           </ListItemIcon>
-          {drawerOpen && <ListItemText   style={{ color: 'white' }}primary="Dashboard" />}
+          {drawerOpen && <ListItemText style={{ color: "white" }} primary="Dashboard" />}
         </ListItem>
 
         <Divider sx={{ backgroundColor: "rgba(255, 255, 255, 0.5)" }} />
 
-        {/* Users Menu */}
+        {/* Customers Menu */}
         <ListItem button onClick={toggleUsersMenu}>
           <ListItemIcon>
             <Group sx={{ color: "white" }} />
           </ListItemIcon>
-          {drawerOpen && <ListItemText  style={{ color: 'white' }} primary="Customers" />}
+          {drawerOpen && <ListItemText style={{ color: "white" }} primary="Customers" />}
           {openUsers ? <ExpandLess sx={{ color: "white" }} /> : <ExpandMore sx={{ color: "white" }} />}
         </ListItem>
         <Collapse in={openUsers} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItem   style={{ color: 'white' }}button onClick={() => routeToPage("/addcustomers")}>
-              <ListItemIcon>
-                <Add sx={{ color: "white" }} />
-              </ListItemIcon>
-              {drawerOpen && <ListItemText primary="Add customers" />}
-            </ListItem>
             <ListItem button onClick={() => routeToPage("/customerlist")}>
               <ListItemIcon>
                 <Group sx={{ color: "white" }} />
               </ListItemIcon>
-              {drawerOpen && <ListItemText  style={{ color: 'white' }}primary="Customers List" />}
+              {drawerOpen && <ListItemText style={{ color: "white" }} primary="Customers List" />}
             </ListItem>
           </List>
         </Collapse>
 
         <Divider sx={{ backgroundColor: "rgba(255, 255, 255, 0.5)" }} />
 
-        {/* Workers Menu */}
-        <ListItem button onClick={toggleWorkersMenu}>
+         {/* Workers */}
+         <ListItem button onClick={toggleWorkersMenu}>
           <ListItemIcon>
             <Person sx={{ color: "white" }} />
           </ListItemIcon>
-          {drawerOpen && <ListItemText  style={{ color: 'white' }}primary="Workers" />}
+          {drawerOpen && <ListItemText style={{ color: "white" }} primary="Workers" />}
           {openWorkers ? <ExpandLess sx={{ color: "white" }} /> : <ExpandMore sx={{ color: "white" }} />}
         </ListItem>
         <Collapse in={openWorkers} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItem button onClick={() => routeToPage("/addworker")}>
-              <ListItemIcon>
-                <Add sx={{ color: "white" }} />
-              </ListItemIcon>
-              {drawerOpen && <ListItemText  style={{ color: 'white' }} primary="Add Worker" />}
-            </ListItem>
             <ListItem button onClick={() => routeToPage("/workerlist")}>
               <ListItemIcon>
                 <Group sx={{ color: "white" }} />
               </ListItemIcon>
-              {drawerOpen && <ListItemText   style={{ color: 'white' }}primary="Worker List" />}
+              {drawerOpen && <ListItemText style={{ color: "white" }} primary="Worker List" />}
+            </ListItem>
+            <ListItem button onClick={() => routeToPage("/addworker")}>
+              <ListItemIcon>
+                <Add sx={{ color: "white" }} />
+              </ListItemIcon>
+              {drawerOpen && <ListItemText style={{ color: "white" }} primary="Add Worker" />}
             </ListItem>
           </List>
         </Collapse>
 
         <Divider sx={{ backgroundColor: "rgba(255, 255, 255, 0.5)" }} />
-
-      {/* Services Menu */}
-<ListItem button onClick={toggleServicesMenu}>
-  <ListItemIcon>
-    <DirectionsCar sx={{ color: "white" }} />
-  </ListItemIcon>
-  {drawerOpen && <ListItemText style={{ color: 'white' }} primary="Services" />}
-  {openServices ? <ExpandLess sx={{ color: "white" }} /> : <ExpandMore sx={{ color: "white" }} />}
-</ListItem>
-<Collapse in={openServices} timeout="auto" unmountOnExit>
-  <List component="div" disablePadding>
-    {/* Book Service */}
-    <ListItem button onClick={() => routeToPage("/bookservice")}>
-      <ListItemIcon>
-        <Add sx={{ color: "white" }} />
-      </ListItemIcon>
-      {drawerOpen && <ListItemText style={{ color: 'white' }} primary="Add to Service" />}
-    </ListItem>
-    {/* Service History */}
-    <ListItem button onClick={() => routeToPage("/servicehistory")}>
-      <ListItemIcon>
-        <ListAlt sx={{ color: "white" }} />
-      </ListItemIcon>
-      {drawerOpen && <ListItemText style={{ color: 'white' }} primary="Service History" />}
-    </ListItem>
-    {/* Service Type List */}
-    <ListItem button onClick={() => routeToPage("/servicetypes")}>
-      <ListItemIcon>
-        <DirectionsCar sx={{ color: "white" }} />
-      </ListItemIcon>
-      {drawerOpen && <ListItemText style={{ color: 'white' }} primary="Service Types" />}
-    </ListItem>
-  </List>
-</Collapse>
+        {/* Services Menu */}
+        <ListItem button onClick={toggleServicesMenu}>
+          <ListItemIcon>
+            <DirectionsCar sx={{ color: "white" }} />
+          </ListItemIcon>
+          {drawerOpen && <ListItemText style={{ color: "white" }} primary="Services" />}
+          {openServices ? <ExpandLess sx={{ color: "white" }} /> : <ExpandMore sx={{ color: "white" }} />}
+        </ListItem>
+        <Collapse in={openServices} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            {/* Service History */}
+            <ListItem button onClick={() => routeToPage("/servicehistory")}>
+              <ListItemIcon>
+                <ListAlt sx={{ color: "white" }} />
+              </ListItemIcon>
+              {drawerOpen && <ListItemText style={{ color: "white" }} primary="Service History" />}
+            </ListItem>
+            {/* Service Type List */}
+            <ListItem button onClick={() => routeToPage("/servicetypes")}>
+              <ListItemIcon>
+                <DirectionsCar sx={{ color: "white" }} />
+              </ListItemIcon>
+              {drawerOpen && <ListItemText style={{ color: "white" }} primary="Service Types" />}
+            </ListItem>
+          </List>
+        </Collapse>
 
         <Divider sx={{ backgroundColor: "rgba(255, 255, 255, 0.5)" }} />
 
@@ -219,7 +178,7 @@ export default function Sidebar({ drawerOpen, toggleDrawer }) {
           <ListItemIcon>
             <Logout sx={{ color: "white" }} />
           </ListItemIcon>
-          {drawerOpen && <ListItemText  style={{ color: 'white' }} primary="Logout" />}
+          {drawerOpen && <ListItemText style={{ color: "white" }} primary="Logout" />}
         </ListItem>
       </List>
 

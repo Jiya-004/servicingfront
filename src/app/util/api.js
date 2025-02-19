@@ -39,22 +39,36 @@ export async function makeApiCall(endpoint, method = "GET", body = null) {
 }
 
 export function getUsers() {
-  return makeApiCall("/users/list", "GET");
+  return makeApiCall("/user", "GET");
 }
 
 export async function login(data) {
-  console.log("Making api call");
-    const response = await makeApiCall("/auth/login", "POST", data);
-    saveToken(response.Token);
-    return response;
-  
+  console.log("Making API call");
+  console.log(data);
+
+  const response = await makeApiCall("/auth/login", "POST", data);
+
+
+  // Ensure response contains both token and userId
+  if (response.token && response.userId) {
+    // Save token to local storage
+    saveToken(response.token);
+
+    // Optionally, store userId as well if needed globally
+    localStorage.setItem("userId", response.userId);
+
+    return response; // Return full response (token and userId)
+  } else {
+    console.error("Login API call failed: Missing token or userId in the response");
+    throw new Error("Invalid login response");
+  }
 }
 export async function addService(data) { // Renamed to addService
   return await makeApiCall("/services","POST",data);
 }
 
 export async function deleteUser(id) {
-  return await makeApiCall(`/users/${id}`, "DELETE");
+  return await makeApiCall(`/user/${id}`, "DELETE");
 }
 
 export async function signup(data) {
@@ -75,11 +89,10 @@ export async function signup(data) {
 }
  
 export async function addUser(data) {
-  return await makeApiCall("/users/add","POST",data);
-  
+  return await makeApiCall("/user","POST",data);
 }
 export  async  function getServices(){
-   return await makeApiCall("/services","GET")
+   return await makeApiCall("/services","GET");
 };
 export const deleteService = async (id) => {
   return await makeApiCall(`/services/${id}`, "DELETE");
@@ -97,7 +110,7 @@ export const deleteWorker = async (id) => {
 };
 export async function updateUser(id, data) {
   try {
-    return await makeApiCall(`/users/${id}`, "PUT", data);
+    return await makeApiCall(`/user/${id}`, "PUT", data);
   } catch (error) {
     console.error("Error updating customer:", error);
     throw error; // Rethrow the error to be handled in the component
@@ -128,5 +141,51 @@ export async function updateServiceType(id, data) {
 }
 export async function addServiceType(data) {
   return await makeApiCall("/servicetypes","POST",data);
+  
+}
+export async function getUserById(id) {
+  return await makeApiCall(`/user/${id}`, "GET");
+}
+export async function getServicesByUserId(id) {
+  return await makeApiCall(`/services/user/${id}`, "GET");
+}
+export async function addFeedback(data) {
+  return await makeApiCall("/api/feedback","POST",data);
+  
+}
+export async function getTotalCustomers() {
+  return await makeApiCall("/user/total-customers","GET");
+  
+}
+export async function getTotalWorkers() {
+  return await makeApiCall("/workers/total-workers","GET");
+  
+}
+export async function getTotalServiceTypes() {
+  return await makeApiCall("/servicetypes/total-service-types","GET");
+  
+}
+export async function getTotalServicesMade() {
+  return await makeApiCall("/services/total-services-made","GET");
+  
+}
+export async function getFeedbacks() {
+  return await makeApiCall("/api/feedback/feedbacks","GET");
+  
+}
+
+export async function getFeedback() {
+  return await makeApiCall("/api/feedback","GET");
+  
+}
+export async function deleteFeedback(feedbackId) {
+  return await makeApiCall(`/api/feedback/${feedbackId}`, "DELETE");
+}
+export async function   getPendingRequests() {
+  return await makeApiCall("/services/status/Pending","GET");
+  
+}
+export async function approveRequest(id,data) {
+  return await makeApiCall(`/services/approve/${id}`, "PUT", data);
   
 }

@@ -1,199 +1,354 @@
 "use client";
-
 import React, { useState } from "react";
-import { addUser } from "../util/api";
+import { useRouter } from "next/navigation";
+import { addUser } from "../util/api"; // Assuming this handles the API call
 import MailIcon from "@mui/icons-material/Mail";
 import PersonIcon from "@mui/icons-material/Person";
 import LockIcon from "@mui/icons-material/Lock";
-import PhoneIcon from "@mui/icons-material/Phone";
+import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import HomeIcon from "@mui/icons-material/Home";
-import styles from "./signup.module.css";
-import { useRouter } from "next/navigation";
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import styles from "./signup.module.css"; // Assuming you still want to keep styles
 
-export default function SignUp() {
-  const [signUpData, setSignUpData] = useState({
+const SignUp = () => {
+  const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    email: "",
+    username: "",
     address: "",
     phoneNumber: "",
-    username: "",
-    password: "",
-    role: "user", // Default role
-  });
-
-  const [errors, setErrors] = useState({
     email: "",
     password: "",
-    phoneNumber: "",
+    role: "user", // Default role is user
   });
 
+  const [error, setError] = useState(""); // Define error state
+  const [success, setSuccess] = useState(""); // Define success state
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSignUpData({
-      ...signUpData,
+    setFormData({
+      ...formData,
       [name]: value,
-    });
-
-    setErrors({
-      ...errors,
-      [name]: "",
     });
   };
 
+  // Validate the form
+  const validateForm = () => {
+    const { firstName, lastName, email, phoneNumber, username, address, password } = formData;
+
+    if (!firstName.trim() || !lastName.trim()) {
+      setError("First name and last name are required.");
+      return false;
+    }
+
+    if (!username.trim() || !address.trim()) {
+      setError("Username and address are required.");
+      return false;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Please enter a valid email address.");
+      return false;
+    }
+
+    if (!/^\d{10}$/.test(phoneNumber)) {
+      setError("Please enter a valid 10-digit phone number.");
+      return false;
+    }
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      return false;
+    }
+
+    return true;
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let valid = true;
-    const newErrors = {};
-
-    if (!signUpData.email.endsWith("@gmail.com")) {
-      newErrors.email = "Email must end with @gmail.com";
-      valid = false;
-    }
-
-    if (signUpData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters long";
-      valid = false;
-    }
-
-    if (signUpData.phoneNumber && !/^\d{10}$/.test(signUpData.phoneNumber)) {
-      newErrors.phoneNumber = "Phone number must be 10 digits";
-      valid = false;
-    }
-
-    if (!valid) {
-      setErrors(newErrors);
+    if (!validateForm()) {
       return;
     }
 
     setLoading(true);
     try {
-      await addUser(signUpData);
-      console.log("Signup successful");
-      router.push("/login");
+      await addUser(formData); // Await the API call to add user
+      setSuccess("User registered successfully!");
+      setError(""); // Clear any previous error message
+
+      setFormData({
+        firstName: "",
+        lastName: "",
+        username: "",
+        address: "",
+        phoneNumber: "",
+        email: "",
+        password: "",
+        role: "user", // Reset role to user
+      });
+
+      router.push("/login"); // Redirect after successful sign-up
     } catch (error) {
-      console.error("Signup failed:", error);
-      setErrors({ ...errors, email: "Error during signup. Please try again." });
+      console.error("Error adding user:", error);
+      setError("Error during registration. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <div className={styles.text}>Sign up</div>
-        <div className={styles.underline}></div>
-      </div>
-      <form onSubmit={handleSubmit} className={styles.inputs}>
-        <div className={styles.input}>
-          <PersonIcon style={{ fontSize: "20px", color: "#333" }} />
+    <div
+      style={{
+        maxWidth: "500px",
+        margin: "50px auto",
+        padding: "40px",
+        backgroundColor: "#f9f9f9",
+        borderRadius: "8px",
+        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.5)",
+        fontFamily: "'Roboto', sans-serif",
+      }}
+    >
+      <h2
+        style={{
+          textAlign: "center",
+          color: "purple",
+          marginBottom: "20px",
+          fontSize: "24px",
+          fontWeight: "500",
+        }}
+      >
+        Sign Up
+      </h2>
+      {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
+      {success && <p style={{ color: "green", textAlign: "center" }}>{success}</p>}
+      <form onSubmit={handleSubmit}>
+        {/* First Name */}
+        <div
+          style={{
+            marginBottom: "20px",
+            display: "flex",
+            alignItems: "center",
+            borderBottom: "1px solid #ddd",
+            paddingBottom: "10px",
+          }}
+        >
+          <PersonIcon style={{ fontSize: "24px", color: "#333", marginRight: "10px" }} />
           <input
             type="text"
             name="firstName"
-            placeholder="First Name"
-            value={signUpData.firstName}
+            value={formData.firstName}
             onChange={handleChange}
+            style={{
+              width: "100%",
+              padding: "12px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              fontSize: "16px",
+              outline: "none",
+            }}
+            placeholder="Enter first name"
             required
           />
         </div>
-        <div className={styles.input}>
-          <PersonIcon style={{ fontSize: "20px", color: "#333" }} />
+
+        {/* Last Name */}
+        <div
+          style={{
+            marginBottom: "20px",
+            display: "flex",
+            alignItems: "center",
+            borderBottom: "1px solid #ddd",
+            paddingBottom: "10px",
+          }}
+        >
+          <PersonIcon style={{ fontSize: "24px", color: "#333", marginRight: "10px" }} />
           <input
             type="text"
             name="lastName"
-            placeholder="Last Name"
-            value={signUpData.lastName}
+            value={formData.lastName}
             onChange={handleChange}
+            style={{
+              width: "100%",
+              padding: "12px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              fontSize: "16px",
+              outline: "none",
+            }}
+            placeholder="Enter last name"
             required
           />
         </div>
-        <div className={styles.input}>
-          <MailIcon style={{ fontSize: "20px", color: "#333" }} />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={signUpData.email}
-            onChange={handleChange}
-            required
-          />
-          {errors.email && <p className={styles.error}>{errors.email}</p>}
-        </div>
-        <div className={styles.input}>
-          <HomeIcon style={{ fontSize: "20px", color: "#333" }} />
-          <input
-            type="text"
-            name="address"
-            placeholder="Address"
-            value={signUpData.address}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className={styles.input}>
-          <PhoneIcon style={{ fontSize: "20px", color: "#333" }} />
-          <input
-            type="text"
-            name="phoneNumber"
-            placeholder="Phone Number"
-            value={signUpData.phoneNumber}
-            onChange={handleChange}
-          />
-          {errors.phoneNumber && <p className={styles.error}>{errors.phoneNumber}</p>}
-        </div>
-        <div className={styles.input}>
-          <PersonIcon style={{ fontSize: "20px", color: "#333" }} />
+
+        {/* Username */}
+        <div
+          style={{
+            marginBottom: "20px",
+            display: "flex",
+            alignItems: "center",
+            borderBottom: "1px solid #ddd",
+            paddingBottom: "10px",
+          }}
+        >
+          <PersonIcon style={{ fontSize: "24px", color: "#333", marginRight: "10px" }} />
           <input
             type="text"
             name="username"
-            placeholder="Username"
-            value={signUpData.username}
+            value={formData.username}
             onChange={handleChange}
+            style={{
+              width: "100%",
+              padding: "12px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              fontSize: "16px",
+              outline: "none",
+            }}
+            placeholder="Enter username"
             required
           />
         </div>
-        <div className={styles.input}>
-          <LockIcon style={{ fontSize: "20px", color: "#333" }} />
+
+        {/* Address */}
+        <div
+          style={{
+            marginBottom: "20px",
+            display: "flex",
+            alignItems: "center",
+            borderBottom: "1px solid #ddd",
+            paddingBottom: "10px",
+          }}
+        >
+          <HomeIcon style={{ fontSize: "24px", color: "#333", marginRight: "10px" }} />
+          <input
+            type="text"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            style={{
+              width: "100%",
+              padding: "12px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              fontSize: "16px",
+              outline: "none",
+            }}
+            placeholder="Enter address"
+            required
+          />
+        </div>
+
+        {/* Phone Number */}
+        <div
+          style={{
+            marginBottom: "20px",
+            display: "flex",
+            alignItems: "center",
+            borderBottom: "1px solid #ddd",
+            paddingBottom: "10px",
+          }}
+        >
+          <LocalPhoneIcon style={{ fontSize: "24px", color: "#333", marginRight: "10px" }} />
+          <input
+            type="text"
+            name="phoneNumber"
+            value={formData.phoneNumber}
+            onChange={handleChange}
+            style={{
+              width: "100%",
+              padding: "12px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              fontSize: "16px",
+              outline: "none",
+            }}
+            placeholder="Enter phone number"
+            required
+          />
+        </div>
+
+        {/* Email */}
+        <div
+          style={{
+            marginBottom: "20px",
+            display: "flex",
+            alignItems: "center",
+            borderBottom: "1px solid #ddd",
+            paddingBottom: "10px",
+          }}
+        >
+          <MailIcon style={{ fontSize: "24px", color: "#333", marginRight: "10px" }} />
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            style={{
+              width: "100%",
+              padding: "12px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              fontSize: "16px",
+              outline: "none",
+            }}
+            placeholder="Enter email"
+            required
+          />
+        </div>
+
+        {/* Password */}
+        <div
+          style={{
+            marginBottom: "20px",
+            display: "flex",
+            alignItems: "center",
+            borderBottom: "1px solid #ddd",
+            paddingBottom: "10px",
+          }}
+        >
+          <LockIcon style={{ fontSize: "24px", color: "#333", marginRight: "10px" }} />
           <input
             type="password"
             name="password"
-            placeholder="Password"
-            value={signUpData.password}
+            value={formData.password}
             onChange={handleChange}
+            style={{
+              width: "100%",
+              padding: "12px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              fontSize: "16px",
+              outline: "none",
+            }}
+            placeholder="Enter password"
             required
           />
-          {errors.password && <p className={styles.error}>{errors.password}</p>}
         </div>
-        <div className={styles.input}>
-  <AdminPanelSettingsIcon style={{ fontSize: "20px", color: "#333" }} />
-  <select
-    name="role"
-    value={signUpData.role}
-    onChange={handleChange}
-    required
-    className={styles.select} // Apply custom styling
-  >
-    <option value="" disabled>-- Select Role --</option>
-    <option value="user">User</option>
-    <option value="admin">Admin</option>
-  </select>
-</div>
 
-        <div className={styles.submitContainer}>
-          <button
-            type="submit"
-            className={styles.submit}
-            disabled={loading}
-          >
-            {loading ? "Signing Up..." : "Sign Up"}
-          </button>
-        </div>
+        <button
+          type="submit"
+          style={{
+            width: "100%",
+            padding: "15px",
+            backgroundColor: "#4CAF50",
+            color: "#fff",
+            border: "none",
+            borderRadius: "4px",
+            fontSize: "16px",
+            cursor: "pointer",
+            transition: "background-color 0.3s ease",
+          }}
+          disabled={loading}
+        >
+          {loading ? "Signing up..." : "Sign Up"}
+        </button>
       </form>
     </div>
   );
-}
+};
+
+export default SignUp;

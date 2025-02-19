@@ -8,14 +8,20 @@ const VehicleServiceForm = () => {
     ownerName: "",
     serviceType: "",
     serviceCost: "",
+    userId: "",
   });
   const [serviceTypes, setServiceTypes] = useState([]);
 
   useEffect(() => {
+    const savedUserId = localStorage.getItem("userId"); // Assuming the userId is saved during login
+
+    if (savedUserId) {
+      setFormData({ ...formData, userId: savedUserId });
+    }
+
     fetchServiceTypes();
   }, []);
 
-  // Fetch service types and prices from the database
   const fetchServiceTypes = async () => {
     try {
       const response = await getServiceTypes(); // API call to fetch service types
@@ -25,39 +31,44 @@ const VehicleServiceForm = () => {
     }
   };
 
-  // Handle form data change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prevData) => ({
+      ...prevData,
       [name]: value,
-    });
+    }));
 
-    // If service type is selected, automatically set the corresponding price
     if (name === "serviceType") {
       const selectedService = serviceTypes.find((service) => service.name === value);
-      setFormData({
-        ...formData,
-        serviceType: value,
+      setFormData((prevData) => ({
+        ...prevData,
         serviceCost: selectedService ? selectedService.price : "",
-      });
+      }));
     }
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Set the status to "Pending" before sending the request
+    const requestData = {
+      ...formData,
+      status: "Pending", // Set status to "Pending"
+    };
+
     try {
-      const response = await addService(formData); // Direct API call to add service
+      const response = await addService(requestData); // Send request to add service
       console.log("Service request submitted successfully:", response);
       setFormData({
         vehicleNumber: "",
         ownerName: "",
         serviceType: "",
         serviceCost: "",
+        userId: "",
       });
     } catch (error) {
       console.error("Failed to submit service request:", error.response ? error.response.data : error);
+      alert("Failed to submit the service request. Please try again later.");
     }
   };
 
@@ -161,7 +172,6 @@ const styles = {
     display: "block",
     marginBottom: "8px",
     fontSize: "14px",
-    fontWeight: "",
     color: "#333",
   },
   input: {

@@ -26,6 +26,8 @@ export default function BasicTable() {
   const [open, setOpen] = useState(false);
   const [editedData, setEditedData] = useState({});
   const [editId, setEditId] = useState(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   useEffect(() => {
     fetchUsers();
@@ -34,18 +36,26 @@ export default function BasicTable() {
   const fetchUsers = async () => {
     try {
       const response = await getUsers();
-      setUsers(response);
-      setFilteredUsers(response);
+      const filtered = response.filter(user => user.role !== "admin"); // Exclude admins
+      setUsers(filtered);
+      setFilteredUsers(filtered);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
   };
 
-  const handleDelete = async (id) => {
-    const response = await deleteUser(id);
+  const handleDelete = (id) => {
+    setDeleteId(id);
+    setDeleteOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    const response = await deleteUser(deleteId);
     if (response) {
       fetchUsers();
     }
+    setDeleteOpen(false);
+    setDeleteId(null);
   };
 
   const handleEdit = (row) => {
@@ -89,8 +99,8 @@ export default function BasicTable() {
       } else {
         // Search is text: Match name, address, phone, email, username
         return (
-          user.firstname.toLowerCase().includes(query.toLowerCase()) ||
-          user.lastname.toLowerCase().includes(query.toLowerCase()) ||
+          user.firstName.toLowerCase().includes(query.toLowerCase()) ||
+          user.lastName.toLowerCase().includes(query.toLowerCase()) ||
           user.address.toLowerCase().includes(query.toLowerCase()) ||
           user.phoneNumber.includes(query) ||
           user.email.toLowerCase().includes(query.toLowerCase()) ||
@@ -107,13 +117,13 @@ export default function BasicTable() {
       <TextField
         label="Search by ID, Name, Email, etc."
         variant="outlined"
-         fullWidth
+        fullWidth
         value={searchQuery}
         onChange={handleSearch}
         sx={{
-          marginBottom: 1,
-          backgroundColor: "#f0f0f0", // Change background color
-          color: "#333", // Change text color
+          marginBottom: 2, // Increased margin for better spacing
+          backgroundColor: "#ffffff", // Lighter background for contrast
+          borderRadius: "4px", // Rounded corners
           "& .MuiOutlinedInput-root": {
             "& fieldset": {
               borderColor: "#4CAF50", // Border color
@@ -125,7 +135,7 @@ export default function BasicTable() {
               borderColor: "#2E7D32", // Border color when focused
             },
             "& input": {
-              color: "#000", // Text color inside input
+              color: "#333", // Text color inside input
             },
           },
           "& .MuiInputLabel-root": {
@@ -137,27 +147,27 @@ export default function BasicTable() {
         }}
       />
 
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} elevation={3} sx={{ borderRadius: "8px", overflow: "hidden" }}>
         <Table sx={{ minWidth: 650 }} aria-label="user table">
           <TableHead>
-            <TableRow>
-              <TableCell align="right">Id</TableCell>
-              <TableCell align="right">First Name</TableCell>
-              <TableCell align="right">Last Name</TableCell>
-              <TableCell align="right">Address</TableCell>
-              <TableCell align="right">Phone Number</TableCell>
-              <TableCell align="right">Email</TableCell>
-              <TableCell align="right">Username</TableCell>
-              <TableCell align="right">Action</TableCell>
+            <TableRow sx={{ backgroundColor: "#1976d2", color: "white" }}>
+              <TableCell align="right" sx={{ fontWeight: "bold", color: "white" }}>Id</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold", color: "white" }}>First Name</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold", color: "white" }}>Last Name</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold", color: "white" }}>Address</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold", color: "white" }}>Phone Number</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold", color: "white" }}>Email</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold", color: "white" }}>Username</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold", color: "white" }}>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {filteredUsers.length > 0 ? (
               filteredUsers.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow key={row.id} sx={{ "&:hover": { backgroundColor: "#f5f5f5" } }}>
                   <TableCell align="right">{row.id}</TableCell>
-                  <TableCell align="right">{row.firstname}</TableCell>
-                  <TableCell align="right">{row.lastname}</TableCell>
+                  <TableCell align="right">{row.firstName}</TableCell>
+                  <TableCell align="right">{row.lastName}</TableCell>
                   <TableCell align="right">{row.address}</TableCell>
                   <TableCell align="right">{row.phoneNumber}</TableCell>
                   <TableCell align="right">{row.email}</TableCell>
@@ -191,15 +201,15 @@ export default function BasicTable() {
             margin="dense"
             label="First Name"
             fullWidth
-            value={editedData.firstname || ""}
-            onChange={(e) => handleInputChange(e, "firstname")}
+            value={editedData.firstName || ""}
+            onChange={(e) => handleInputChange(e, "firstName")}
           />
           <TextField
             margin="dense"
             label="Last Name"
             fullWidth
-            value={editedData.lastname || ""}
-            onChange={(e) => handleInputChange(e, "lastname")}
+            value={editedData.lastName || ""}
+            onChange={(e) => handleInputChange(e, "lastName")}
           />
           <TextField
             margin="dense"
@@ -234,6 +244,20 @@ export default function BasicTable() {
           <Button onClick={handleClose}>Cancel</Button>
           <Button variant="contained" color="primary" onClick={handleSave}>
             Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)}>
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this user?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteOpen(false)}>Cancel</Button>
+          <Button variant="contained" color="error" onClick={confirmDelete}>
+            Delete
           </Button>
         </DialogActions>
       </Dialog>

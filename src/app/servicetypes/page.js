@@ -29,6 +29,8 @@ export default function ServiceTypeTable() {
   const [editedData, setEditedData] = useState({});
   const [newService, setNewService] = useState({ name: "", price: "" });
   const [editId, setEditId] = useState(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   useEffect(() => {
     fetchServiceTypes();
@@ -44,11 +46,18 @@ export default function ServiceTypeTable() {
     }
   };
 
-  const handleDelete = async (id) => {
-    const response = await deleteServiceType(id);
+  const handleDeleteOpen = (id) => {
+    setDeleteId(id);
+    setDeleteOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    const response = await deleteServiceType(deleteId);
     if (response) {
       fetchServiceTypes();
     }
+    setDeleteOpen(false);
+    setDeleteId(null);
   };
 
   const handleEdit = (row) => {
@@ -60,6 +69,7 @@ export default function ServiceTypeTable() {
   const handleClose = () => {
     setOpen(false);
     setAddOpen(false);
+    setDeleteOpen(false);
     setEditId(null);
     setNewService({ name: "", price: "" });
   };
@@ -125,54 +135,53 @@ export default function ServiceTypeTable() {
           value={searchQuery}
           onChange={handleSearch}
           sx={{
-            backgroundColor: "#f0f0f0", // Change background color
-            color: "#333", // Change text color
+            backgroundColor: "#f0f0f0",
             "& .MuiOutlinedInput-root": {
               "& fieldset": {
-                borderColor: "#4CAF50", // Border color
+                borderColor: "#4CAF50",
               },
               "&:hover fieldset": {
-                borderColor: "#388E3C", // Border color on hover
+                borderColor: "#388E3C",
               },
               "&.Mui-focused fieldset": {
-                borderColor: "#2E7D32", // Border color when focused
+                borderColor: "#2E7D32",
               },
               "& input": {
-                color: "#000", // Text color inside input
+                color: "#000",
               },
             },
             "& .MuiInputLabel-root": {
-              color: "#666", // Label color
+              color: "#666",
             },
             "& .MuiInputLabel-root.Mui-focused": {
-              color: "#2E7D32", // Label color when focused
+              color: "#2E7D32",
             },
           }}
         />
       </Box>
 
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} elevation={3} sx={{ borderRadius: "8px", overflow: "hidden" }}>
         <Table sx={{ minWidth: 650 }} aria-label="service type table">
           <TableHead>
             <TableRow>
-              <TableCell align="right">Id</TableCell>
-              <TableCell align="right">Service Name</TableCell>
-              <TableCell align="right">Price</TableCell>
-              <TableCell align="right">Action</TableCell>
+              <TableCell align="right" sx={{ fontWeight: 'bold', backgroundColor: '#4CAF50', color: 'white' }}>Id</TableCell>
+              <TableCell align="right" sx={{ fontWeight: 'bold', backgroundColor: '#4CAF50', color: 'white' }}>Service Name</TableCell>
+              <TableCell align="right" sx={{ fontWeight: 'bold', backgroundColor: '#4CAF50', color: 'white' }}>Price</TableCell>
+              <TableCell align="right" sx={{ fontWeight: 'bold', backgroundColor: '#4CAF50', color: 'white' }}>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {filteredServiceTypes.length > 0 ? (
               filteredServiceTypes.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow key={row.id} sx={{ "&:hover": { backgroundColor: "#f5f5f5" } }}>
                   <TableCell align="right">{row.id}</TableCell>
                   <TableCell align="right">{row.name}</TableCell>
-                  <TableCell align="right">{row.price}</TableCell>
+                  <TableCell align="right">Rs.{row.price.toFixed(2)}</TableCell>
                   <TableCell align="right">
-                    <IconButton onClick={() => handleEdit(row)}>
+                    <IconButton onClick={() => handleEdit(row)} color="primary">
                       <Edit />
                     </IconButton>
-                    <IconButton onClick={() => handleDelete(row.id)}>
+                    <IconButton onClick={() => handleDeleteOpen(row.id)} color="error">
                       <Delete />
                     </IconButton>
                   </TableCell>
@@ -189,7 +198,6 @@ export default function ServiceTypeTable() {
         </Table>
       </TableContainer>
 
-      {/* Add Service Button at the Bottom */}
       <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
         <Button
           variant="contained"
@@ -251,6 +259,20 @@ export default function ServiceTypeTable() {
           <Button onClick={handleClose}>Cancel</Button>
           <Button variant="contained" color="primary" onClick={handleAddService}>
             Add
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteOpen} onClose={handleClose}>
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this service type?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteOpen(false)}>Cancel</Button>
+          <Button variant="contained" color="error" onClick={confirmDelete}>
+            Delete
           </Button>
         </DialogActions>
       </Dialog>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { login } from "../util/api";
 import { useRouter } from "next/navigation";
 import styled from "styled-components";
+import { MenuItem, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
 
 const Container = styled.div`
   display: flex;
@@ -73,19 +74,6 @@ const Input = styled.input`
   }
 `;
 
-const Select = styled.select`
-  margin-bottom: 15px;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  outline: none;
-
-  &:focus {
-    border-color: #8e44ad;
-  }
-`;
-
 const StyledButton = styled.button`
   padding: 9px;
   font-size: 16px;
@@ -103,11 +91,12 @@ const StyledButton = styled.button`
 
 export default function Login() {
   const [loginData, setLoginData] = useState({
-    name: "",
+    username: "",
     password: "",
-    role: "admin", // Default role
+    role: "",
   });
-
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false); // State for error dialog
+  const [errorMessage, setErrorMessage] = useState(""); // State for error message
   const router = useRouter();
 
   const handleChange = (e) => {
@@ -120,20 +109,35 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      console.log("My data:", loginData);
-      const response = await login(loginData);
-      console.log(response);
 
-      if (response?.Token) {
-        router.push("/");
+    try {
+      const response = await login(loginData);
+
+      if (response.token && response.userId) {
+        localStorage.setItem("token", response.token);
+        localStorage.setItem("userId", response.userId);
+        localStorage.setItem("userRole", response.userRole);
+
+        // Redirect based on the role
+        if (loginData.role === "user") {
+          router.push("/Userdashboard");
+        } else if (loginData.role === "admin") {
+          router.push("/");
+        }
       } else {
-        alert("Login failed. Please check your credentials.");
+        // If login fails, show the error dialog
+        setErrorMessage("Invalid username, password, or role.");
+        setErrorDialogOpen(true);
       }
     } catch (error) {
-      console.error("Error logging in:", error);
-      alert("An error occurred while logging in.");
+      console.error("Error during login:", error);
+      setErrorMessage("An error occurred during login. Please try again.");
+      setErrorDialogOpen(true);
     }
+  };
+
+  const handleCloseDialog = () => {
+    setErrorDialogOpen(false);
   };
 
   return (
@@ -144,9 +148,9 @@ export default function Login() {
           <Subtitle>Login to your account</Subtitle>
           <Input
             type="text"
-            name="name"
-            placeholder="Name"
-            value={loginData.name}
+            name="username"
+            placeholder="Username"
+            value={loginData.username}
             onChange={handleChange}
           />
           <Input
@@ -156,18 +160,39 @@ export default function Login() {
             value={loginData.password}
             onChange={handleChange}
           />
-          <Select name="role" value={loginData.role} onChange={handleChange}>
-            <option value="admin">Admin</option>
-            <option value="user">User</option>
-          </Select>
+          <TextField
+            label="Role"
+            name="role"
+            value={loginData.role}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            select
+            variant="outlined"
+            required
+          >
+            <MenuItem value="user">User</MenuItem>
+            <MenuItem value="admin">Admin</MenuItem>
+          </TextField>
           <StyledButton onClick={handleSubmit}>Login</StyledButton>
         </FormSection>
 
         {/* Register Link */}
         <Footer>
-          <p>Don't have an account? <a onClick={() => router.push("/signup")}>Register</a></p>
+          <p>Don't have an account? <a onClick={() => router.push("/addcustomers")}>Register</a></p>
         </Footer>
       </Card>
+
+      {/* Error Dialog */}
+      <Dialog open={errorDialogOpen} onClose={handleCloseDialog}>
+        <DialogTitle>Error</DialogTitle>
+        <DialogContent>
+          <p>{errorMessage}</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">Close</Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

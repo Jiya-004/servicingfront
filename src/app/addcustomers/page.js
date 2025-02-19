@@ -1,23 +1,29 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { addUser } from "../util/api"; // Assuming this handles the API call
 import MailIcon from "@mui/icons-material/Mail";
 import PersonIcon from "@mui/icons-material/Person";
+import LockIcon from "@mui/icons-material/Lock";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import HomeIcon from "@mui/icons-material/Home";
-import { addUser } from "../util/api";
 
 const CustomerForm = () => {
   const [formData, setFormData] = useState({
-    firstname: "",
-    lastname: "",
+    firstName: "",
+    lastName: "",
     username: "",
     address: "",
     phoneNumber: "",
     email: "",
+    password: "", // Added password field
+    role: "user",
   });
 
-  const [error, setError] = useState(""); // Define error state
-  const [success, setSuccess] = useState(""); // Define success state
+  const [error, setError] = useState(""); 
+  const [success, setSuccess] = useState(""); 
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   // Handle input change
   const handleChange = (e) => {
@@ -29,9 +35,9 @@ const CustomerForm = () => {
   };
 
   const validateForm = () => {
-    const { firstname, lastname, email, phoneNumber, username, address } = formData;
+    const { firstName, lastName, email, phoneNumber, username, address, password } = formData;
 
-    if (!firstname.trim() || !lastname.trim()) {
+    if (!firstName.trim() || !lastName.trim()) {
       setError("First name and last name are required.");
       return false;
     }
@@ -51,28 +57,37 @@ const CustomerForm = () => {
       return false;
     }
 
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return false;
+    }
+
     return true;
   };
 
   // Handle form submission
-  const handleSubmit = async (e) => { // Marked as async
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
       return;
     }
     try {
-      await addUser(formData); // Await the API call
+      await addUser(formData);
       setSuccess("Customer added successfully!");
-      setError(""); // Clear any previous error message
+      setError(""); 
 
       setFormData({
-        firstname: "",
-        lastname: "",
+        firstName: "",
+        lastName: "",
         username: "",
         address: "",
         phoneNumber: "",
         email: "",
+        password: "", // Reset password after submission
+        role: "user",
       });
+
+      router.push("/login");
     } catch (error) {
       console.error("Error adding user:", error);
       setError("Error adding customer. Please try again.");
@@ -100,205 +115,151 @@ const CustomerForm = () => {
           fontWeight: "500",
         }}
       >
-        Customer Information Form
+        Sign Up
       </h2>
       {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
       {success && <p style={{ color: "green", textAlign: "center" }}>{success}</p>}
       <form onSubmit={handleSubmit}>
+        
         {/* First Name */}
-        <div
-          style={{
-            marginBottom: "20px",
-            display: "flex",
-            alignItems: "center",
-            borderBottom: "1px solid #ddd",
-            paddingBottom: "10px",
-          }}
-        >
-          <PersonIcon style={{ fontSize: "24px", color: "#333", marginRight: "10px" }} />
+        <div style={inputContainerStyle}>
+          <PersonIcon style={iconStyle} />
           <input
             type="text"
-            name="firstname"
-            value={formData.firstname}
+            name="firstName"
+            value={formData.firstName}
             onChange={handleChange}
-            style={{
-              width: "100%",
-              padding: "12px",
-              border: "1px solid #ddd",
-              borderRadius: "4px",
-              fontSize: "16px",
-              outline: "none",
-            }}
+            style={inputStyle}
             placeholder="Enter first name"
             required
           />
         </div>
 
         {/* Last Name */}
-        <div
-          style={{
-            marginBottom: "20px",
-            display: "flex",
-            alignItems: "center",
-            borderBottom: "1px solid #ddd",
-            paddingBottom: "10px",
-          }}
-        >
-          <PersonIcon style={{ fontSize: "24px", color: "#333", marginRight: "10px" }} />
+        <div style={inputContainerStyle}>
+          <PersonIcon style={iconStyle} />
           <input
             type="text"
-            name="lastname"
-            value={formData.lastname}
+            name="lastName"
+            value={formData.lastName}
             onChange={handleChange}
-            style={{
-              width: "100%",
-              padding: "12px",
-              border: "1px solid #ddd",
-              borderRadius: "4px",
-              fontSize: "16px",
-              outline: "none",
-            }}
+            style={inputStyle}
             placeholder="Enter last name"
             required
           />
         </div>
 
         {/* Username */}
-        <div
-          style={{
-            marginBottom: "20px",
-            display: "flex",
-            alignItems: "center",
-            borderBottom: "1px solid #ddd",
-            paddingBottom: "10px",
-          }}
-        >
-          <PersonIcon style={{ fontSize: "24px", color: "#333", marginRight: "10px" }} />
+        <div style={inputContainerStyle}>
+          <PersonIcon style={iconStyle} />
           <input
             type="text"
             name="username"
             value={formData.username}
             onChange={handleChange}
-            style={{
-              width: "100%",
-              padding: "12px",
-              border: "1px solid #ddd",
-              borderRadius: "4px",
-              fontSize: "16px",
-              outline: "none",
-            }}
+            style={inputStyle}
             placeholder="Enter username"
             required
           />
         </div>
 
         {/* Address */}
-        <div
-          style={{
-            marginBottom: "20px",
-            display: "flex",
-            alignItems: "center",
-            borderBottom: "1px solid #ddd",
-            paddingBottom: "10px",
-          }}
-        >
-          <HomeIcon style={{ fontSize: "24px", color: "#333", marginRight: "10px" }} />
+        <div style={inputContainerStyle}>
+          <HomeIcon style={iconStyle} />
           <input
             type="text"
             name="address"
             value={formData.address}
             onChange={handleChange}
-            style={{
-              width: "100%",
-              padding: "12px",
-              border: "1px solid #ddd",
-              borderRadius: "4px",
-              fontSize: "16px",
-              outline: "none",
-            }}
+            style={inputStyle}
             placeholder="Enter address"
             required
           />
         </div>
 
         {/* Phone Number */}
-        <div
-          style={{
-            marginBottom: "20px",
-            display: "flex",
-            alignItems: "center",
-            borderBottom: "1px solid #ddd",
-            paddingBottom: "10px",
-          }}
-        >
-          <LocalPhoneIcon style={{ fontSize: "24px", color: "#333", marginRight: "10px" }} />
+        <div style={inputContainerStyle}>
+          <LocalPhoneIcon style={iconStyle} />
           <input
             type="text"
             name="phoneNumber"
             value={formData.phoneNumber}
             onChange={handleChange}
-            style={{
-              width: "100%",
-              padding: "12px",
-              border: "1px solid #ddd",
-              borderRadius: "4px",
-              fontSize: "16px",
-              outline: "none",
-            }}
+            style={inputStyle}
             placeholder="Enter phone number"
             required
           />
         </div>
 
         {/* Email */}
-        <div
-          style={{
-            marginBottom: "20px",
-            display: "flex",
-            alignItems: "center",
-            borderBottom: "1px solid #ddd",
-            paddingBottom: "10px",
-          }}
-        >
-          <MailIcon style={{ fontSize: "24px", color: "#333", marginRight: "10px" }} />
+        <div style={inputContainerStyle}>
+          <MailIcon style={iconStyle} />
           <input
             type="text"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            style={{
-              width: "100%",
-              padding: "12px",
-              border: "1px solid #ddd",
-              borderRadius: "4px",
-              fontSize: "16px",
-              outline: "none",
-            }}
+            style={inputStyle}
             placeholder="Enter email"
             required
           />
         </div>
 
+        {/* Password */}
+        <div style={inputContainerStyle}>
+          <LockIcon style={iconStyle} />
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            style={inputStyle}
+            placeholder="Enter password"
+            required
+          />
+        </div>
+
         {/* Submit Button */}
-        <button
-          type="submit"
-          style={{
-            width: "100%",
-            padding: "15px",
-            backgroundColor: "#8e44ad",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "16px",
-            transition: "background-color 0.3s ease",
-          }}
-        >
-          Submit Request
-        </button>
+        <button type="submit" style={buttonStyle}>Submit Request</button>
       </form>
     </div>
   );
+};
+
+// Styles
+const inputContainerStyle = {
+  marginBottom: "20px",
+  display: "flex",
+  alignItems: "center",
+  borderBottom: "1px solid #ddd",
+  paddingBottom: "10px",
+};
+
+const iconStyle = {
+  fontSize: "24px",
+  color: "#333",
+  marginRight: "10px",
+};
+
+const inputStyle = {
+  width: "100%",
+  padding: "12px",
+  border: "1px solid #ddd",
+  borderRadius: "4px",
+  fontSize: "16px",
+  outline: "none",
+};
+
+const buttonStyle = {
+  width: "100%",
+  padding: "15px",
+  backgroundColor: "#8e44ad",
+  color: "#fff",
+  border: "none",
+  borderRadius: "4px",
+  cursor: "pointer",
+  fontSize: "16px",
+  transition: "background-color 0.3s ease",
 };
 
 export default CustomerForm;
