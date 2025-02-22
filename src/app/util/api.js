@@ -154,7 +154,7 @@ export async function addFeedback(data) {
   
 }
 export async function getTotalCustomers() {
-  return await makeApiCall("/user/total-customers","GET");
+  return await makeApiCall("/user/total-users","GET");
   
 }
 export async function getTotalWorkers() {

@@ -10,22 +10,22 @@ const VehicleServiceForm = () => {
     serviceCost: "",
     userId: "",
   });
+
   const [serviceTypes, setServiceTypes] = useState([]);
+  const [showDialog, setShowDialog] = useState(false); // State to show/hide dialog
 
   useEffect(() => {
-    const savedUserId = localStorage.getItem("userId"); // Assuming the userId is saved during login
-
+    const savedUserId = localStorage.getItem("userId");
     if (savedUserId) {
-      setFormData({ ...formData, userId: savedUserId });
+      setFormData((prevData) => ({ ...prevData, userId: savedUserId }));
     }
-
     fetchServiceTypes();
   }, []);
 
   const fetchServiceTypes = async () => {
     try {
-      const response = await getServiceTypes(); // API call to fetch service types
-      setServiceTypes(response); // Assuming response contains an array of service types with price
+      const response = await getServiceTypes();
+      setServiceTypes(response);
     } catch (error) {
       console.error("Error fetching service types:", error);
     }
@@ -50,21 +50,17 @@ const VehicleServiceForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Set the status to "Pending" before sending the request
-    const requestData = {
-      ...formData,
-      status: "Pending", // Set status to "Pending"
-    };
+    const requestData = { ...formData, status: "Pending" };
 
     try {
-      const response = await addService(requestData); // Send request to add service
-      console.log("Service request submitted successfully:", response);
+      await addService(requestData);
+      setShowDialog(true); // Show success dialog
       setFormData({
         vehicleNumber: "",
         ownerName: "",
         serviceType: "",
         serviceCost: "",
-        userId: "",
+        userId: formData.userId, // Keep userId unchanged
       });
     } catch (error) {
       console.error("Failed to submit service request:", error.response ? error.response.data : error);
@@ -141,6 +137,18 @@ const VehicleServiceForm = () => {
           </button>
         </form>
       </div>
+
+      {/* Success Dialog Box */}
+      {showDialog && (
+        <div style={styles.dialogOverlay}>
+          <div style={styles.dialogBox}>
+            <h3 style={styles.dialogText}>Service request submitted successfully!</h3>
+            <button style={styles.dialogButton} onClick={() => setShowDialog(false)}>
+              OK
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -151,7 +159,7 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     height: "100vh",
-    backgroundColor: "linear-gradient(#2A00B7, #42006C)",
+    background: "linear-gradient(#2A00B7, #42006C)",
   },
   formContainer: {
     width: "500px",
@@ -162,7 +170,7 @@ const styles = {
   },
   heading: {
     textAlign: "center",
-    color: "#4A148C",
+    color: "black",
     marginBottom: "20px",
   },
   inputGroup: {
@@ -201,6 +209,39 @@ const styles = {
     fontSize: "18px",
     cursor: "pointer",
     transition: "background-color 0.3s",
+  },
+
+  // Dialog Styles
+  dialogOverlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  dialogBox: {
+    width: "300px",
+    padding: "20px",
+    backgroundColor: "#fff",
+    borderRadius: "8px",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    textAlign: "center",
+  },
+  dialogText: {
+    marginBottom: "15px",
+    color: "#333",
+  },
+  dialogButton: {
+    padding: "10px 20px",
+    backgroundColor: "#8e44ad",
+    color: "#fff",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
   },
 };
 

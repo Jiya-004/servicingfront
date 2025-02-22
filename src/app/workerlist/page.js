@@ -25,6 +25,8 @@ export default function WorkerTable() {
   const [editedData, setEditedData] = useState({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [confirmDeleteDialogOpen, setConfirmDeleteDialogOpen] = useState(false);
+  const [workerToDelete, setWorkerToDelete] = useState(null);
 
   useEffect(() => {
     fetchWorkers();
@@ -60,12 +62,20 @@ export default function WorkerTable() {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
+    setWorkerToDelete(id);
+    setConfirmDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
     try {
-      await deleteWorker(id);
+      await deleteWorker(workerToDelete);
       fetchWorkers();
     } catch (error) {
       console.error("Error deleting worker:", error);
+    } finally {
+      setConfirmDeleteDialogOpen(false);
+      setWorkerToDelete(null);
     }
   };
 
@@ -211,6 +221,20 @@ export default function WorkerTable() {
           <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
           <Button onClick={handleSave} variant="contained" color="primary">
             Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={confirmDeleteDialogOpen} onClose={() => setConfirmDeleteDialogOpen(false)}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this worker?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmDeleteDialogOpen(false)}>Cancel</Button>
+          <Button onClick={confirmDelete} variant="contained" color="secondary">
+            Delete
           </Button>
         </DialogActions>
       </Dialog>

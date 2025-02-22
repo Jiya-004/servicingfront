@@ -7,6 +7,13 @@ import PersonIcon from "@mui/icons-material/Person";
 import LockIcon from "@mui/icons-material/Lock";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import HomeIcon from "@mui/icons-material/Home";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from "@mui/material";
 
 const CustomerForm = () => {
   const [formData, setFormData] = useState({
@@ -20,9 +27,10 @@ const CustomerForm = () => {
     role: "user",
   });
 
-  const [error, setError] = useState(""); 
-  const [success, setSuccess] = useState(""); 
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false); // State for dialog
   const router = useRouter();
 
   // Handle input change
@@ -74,8 +82,9 @@ const CustomerForm = () => {
     try {
       await addUser(formData);
       setSuccess("Customer added successfully!");
-      setError(""); 
+      setError("");
 
+      // Reset form data
       setFormData({
         firstName: "",
         lastName: "",
@@ -87,11 +96,17 @@ const CustomerForm = () => {
         role: "user",
       });
 
-      router.push("/login");
+      // Show success dialog
+      setDialogOpen(true);
     } catch (error) {
       console.error("Error adding user:", error);
       setError("Error adding customer. Please try again.");
     }
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    router.push("/login"); // Redirect to login page after closing dialog
   };
 
   return (
@@ -120,7 +135,6 @@ const CustomerForm = () => {
       {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
       {success && <p style={{ color: "green", textAlign: "center" }}>{success}</p>}
       <form onSubmit={handleSubmit}>
-        
         {/* First Name */}
         <div style={inputContainerStyle}>
           <PersonIcon style={iconStyle} />
@@ -222,6 +236,19 @@ const CustomerForm = () => {
         {/* Submit Button */}
         <button type="submit" style={buttonStyle}>Submit Request</button>
       </form>
+
+      {/* Success Dialog */}
+      <Dialog open={dialogOpen} onClose={handleDialogClose}>
+        <DialogTitle>Success</DialogTitle>
+        <DialogContent>
+          <p> Added successfully!</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
@@ -263,3 +290,4 @@ const buttonStyle = {
 };
 
 export default CustomerForm;
+

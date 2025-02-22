@@ -1,5 +1,8 @@
 "use client";
-import { Box, Button, Grid, TextField, Typography, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import { 
+  Box, Button, Grid, TextField, Typography, Dialog, 
+  DialogActions, DialogContent, DialogContentText, DialogTitle 
+} from "@mui/material";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { addWorker } from "../util/api";
@@ -15,6 +18,8 @@ export default function WorkerInformationForm() {
   });
 
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const handleChange = (e) => {
@@ -27,10 +32,18 @@ export default function WorkerInformationForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
+    // Validation to check if any field is empty
+    if (Object.values(workerData).some((value) => value.trim() === "")) {
+      setError("All fields are required.");
+      setErrorDialogOpen(true);
+      return;
+    }
+
     try {
-      await handleAdd(workerData);
-      console.log("Customer added successfully!");
+      await addWorker(workerData);
+      setSuccessDialogOpen(true); // Show success dialog
+
       // Reset form after successful submission
       setWorkerData({
         firstName: "",
@@ -39,25 +52,13 @@ export default function WorkerInformationForm() {
         expertise: "",
         contactInfo: "",
         email: ""
-
       });
+
+      setError(""); // Clear any previous error
     } catch (error) {
-      
+      setError("There was an error submitting your information. Please try again.");
       setErrorDialogOpen(true);
-    } 
-
-    
-  };
-  const handleAdd = async (worker) => {
-    try {
-      await addWorker(worker);
-    } catch (error) {
-      throw error; // Propagate error to be handled by handleSubmit
     }
-  };
-
-  const handleDialogClose = () => {
-    setErrorDialogOpen(false);
   };
 
   return (
@@ -93,6 +94,11 @@ export default function WorkerInformationForm() {
         >
           Please fill out the form below with your details.
         </Typography>
+        {error && (
+          <Typography color="error" textAlign="center" sx={{ mb: 2 }}>
+            {error}
+          </Typography>
+        )}
         <Grid container direction="column" spacing={3}>
           {/* First Name */}
           <Grid item>
@@ -104,6 +110,8 @@ export default function WorkerInformationForm() {
               value={workerData.firstName}
               onChange={handleChange}
               required
+              error={!workerData.firstName.trim() && error !== ""}
+              helperText={!workerData.firstName.trim() && error !== "" ? "First name is required" : ""}
             />
           </Grid>
 
@@ -117,6 +125,8 @@ export default function WorkerInformationForm() {
               value={workerData.lastName}
               onChange={handleChange}
               required
+              error={!workerData.lastName.trim() && error !== ""}
+              helperText={!workerData.lastName.trim() && error !== "" ? "Last name is required" : ""}
             />
           </Grid>
 
@@ -130,6 +140,8 @@ export default function WorkerInformationForm() {
               value={workerData.address}
               onChange={handleChange}
               required
+              error={!workerData.address.trim() && error !== ""}
+              helperText={!workerData.address.trim() && error !== "" ? "Address is required" : ""}
             />
           </Grid>
 
@@ -143,6 +155,8 @@ export default function WorkerInformationForm() {
               value={workerData.expertise}
               onChange={handleChange}
               required
+              error={!workerData.expertise.trim() && error !== ""}
+              helperText={!workerData.expertise.trim() && error !== "" ? "Expertise is required" : ""}
             />
           </Grid>
 
@@ -156,6 +170,8 @@ export default function WorkerInformationForm() {
               value={workerData.contactInfo}
               onChange={handleChange}
               required
+              error={!workerData.contactInfo.trim() && error !== ""}
+              helperText={!workerData.contactInfo.trim() && error !== "" ? "Contact info is required" : ""}
             />
           </Grid>
 
@@ -170,6 +186,8 @@ export default function WorkerInformationForm() {
               value={workerData.email}
               onChange={handleChange}
               required
+              error={!workerData.email.trim() && error !== ""}
+              helperText={!workerData.email.trim() && error !== "" ? "Valid email is required" : ""}
             />
           </Grid>
 
@@ -194,16 +212,31 @@ export default function WorkerInformationForm() {
         </Grid>
       </Box>
 
-      {/* Error Dialog */}
-      <Dialog open={errorDialogOpen} onClose={handleDialogClose}>
-        <DialogTitle>Submission Failed</DialogTitle>
+      {/* Success Dialog */}
+      <Dialog open={successDialogOpen} onClose={() => setSuccessDialogOpen(false)}>
+        <DialogTitle>Success</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            There was an error submitting your information. Please try again later.
+            Worker has been successfully added!
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose} color="primary" variant="contained">
+          <Button onClick={() => setSuccessDialogOpen(false)} color="primary" variant="contained">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Error Dialog */}
+      <Dialog open={errorDialogOpen} onClose={() => setErrorDialogOpen(false)}>
+        <DialogTitle>Submission Failed</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {error || "There was an error submitting your information. Please try again."}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setErrorDialogOpen(false)} color="primary" variant="contained">
             Close
           </Button>
         </DialogActions>

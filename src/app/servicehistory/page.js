@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { IconButton, TextField, TableRow as MuiTableRow, TableCell as MuiTableCell, Box, Dialog, DialogActions, DialogContent, DialogTitle, Button } from '@mui/material';
-import { Delete, Edit } from '@mui/icons-material';
+import { Delete } from '@mui/icons-material';
 import { getServices, deleteService } from '../util/api';
 
 export default function ServiceTable() {
@@ -78,7 +78,7 @@ export default function ServiceTable() {
   };
 
   return (
-    <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}> {/* Center content */}
+    <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <TextField
         label="Search by Service ID, Vehicle Number, Owner Name, etc."
         variant="outlined"
@@ -136,7 +136,6 @@ export default function ServiceTable() {
                   <TableCell align="right" sx={{ padding: "12px" }}>{row.serviceCost}</TableCell>
                   <TableCell align="right" sx={{ padding: "12px", color: getStatusColor(row.status) }}>{row.status}</TableCell>
                   <TableCell align="right" sx={{ padding: "12px" }}>
-                    <IconButton><Edit sx={{ color: "#4285f4" }} /></IconButton>
                     <IconButton onClick={() => handleDelete(row.serviceId)}><Delete sx={{ color: "#d32f2f" }} /></IconButton>
                   </TableCell>
                 </TableRow>
@@ -150,7 +149,6 @@ export default function ServiceTable() {
         </Table>
       </TableContainer>
 
-      {/* Delete Confirmation Dialog */}
       <Dialog open={deleteConfirmationOpen} onClose={closeDeleteConfirmation}>
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>

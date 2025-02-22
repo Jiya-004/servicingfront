@@ -24,11 +24,18 @@ const FeedbackForm = () => {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successDialog, setSuccessDialog] = useState(false); // State for dialog box
+  const [successDialog, setSuccessDialog] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate input fields
+    if (!formData.name.trim() || !formData.message.trim()) {
+      setError("Both fields are required.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       await addFeedback(formData); // Send feedback to API
@@ -62,7 +69,7 @@ const FeedbackForm = () => {
           </Typography>
 
           {error && (
-            <Typography color="error.main" align="center">
+            <Typography color="error.main" align="center" sx={{ mb: 2 }}>
               {error}
             </Typography>
           )}
@@ -79,6 +86,8 @@ const FeedbackForm = () => {
               value={formData.name}
               onChange={handleChange}
               sx={{ mb: 3 }}
+              error={!formData.name.trim() && error !== ""}
+              helperText={!formData.name.trim() && error !== "" ? "Name is required" : ""}
             />
 
             <TextField
@@ -93,6 +102,8 @@ const FeedbackForm = () => {
               value={formData.message}
               onChange={handleChange}
               sx={{ mb: 3 }}
+              error={!formData.message.trim() && error !== ""}
+              helperText={!formData.message.trim() && error !== "" ? "Message is required" : ""}
             />
 
             <Button
